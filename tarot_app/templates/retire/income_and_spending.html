@@ -1,0 +1,27 @@
+{% extends "retire/header.html" %}
+
+{% block content %}
+
+{% load crispy_forms_tags %}
+
+<!--Register-->
+<body>
+    <main class='wrapper'>
+        <section class='main'>
+            <header class='header'>
+                <h1>Starting Income and Expenses</h1>
+            </header>
+            <form method='POST'>
+                {% csrf_token %}
+                {{ workcashflow_form|crispy }}
+                <button type = 'submit' name = 'submit' value='submit'>Submit</button>
+                {% if can_delete %}
+                    <button type = 'delete' name = 'delete' value = 'delete'>Delete</button>
+                {% endif %}
+            </form>
+        </section>
+    </main>
+</body>
+
+{% endblock %}
+

@@ -1,0 +1,192 @@
+{% extends 'retire/header.html' %}
+
+{% block content %}
+
+<style>
+h2{
+    color: #900000;
+}
+</style>
+
+
+<body>
+    <main class='wrapper'>
+        <div class='aside-1'>
+                <h2 text-align='center'> <b>Projected Savings</b> </h2>
+        </div>
+
+        <section class='main'></section>
+
+        <div class='aside-2'>
+
+            <script src ="https://cdn.plot.ly/plotly-latest.min.js"></script> 
+            {% autoescape off %}
+            {% for plot in plot_div %}
+                {{ plot }}
+            {% endfor %}
+            {% endautoescape %}
+
+            <div class='aside-2'>
+                    <h2 text-align='center'> <b> Projection based on the following assumptions:</b> </h2> 
+            </div>
+            <div align = 'left'>
+                Starting Savings, Income, and Expenses <br>
+                {% for cashflow in work_cashflow %}
+                    "{{ cashflow.name }}" - starting on {{ cashflow.start_date }}, you'll have:
+                    <ul>
+                    <li> starting savings of ${{ cashflow.starting_savings }}
+                    <li> yearly income of ${{ cashflow.yearly_income }}
+                    <li> yearly expenses of ${{ cashflow.yearly_expenses }}
+                    </ul>
+                <a href = 'income_and_expenses'>
+                    Modify or delete
+                </a>
+                 your starting savings, income, and expenses
+                {% endfor %}
+
+                <br>
+                <br>
+
+                Changes in Income <br>
+                {% if not sorted_changes_in_income %}
+                    <ul>
+                    <li> [no changes in income currently planned]
+                    </ul>
+                {% else %}
+                    <ol>
+                    {% for income_change in sorted_changes_in_income %}
+                        <li> "{{ income_change.name }}" - starting on {{ income_change.start_date }} your new yearly income will be ${{ income_change.new_yearly_income }}.
+                        
+                        <a href = 'change_in_income/{{ income_change.pk }}'>
+                            Modify or delete
+                        </a>
+
+                    {% endfor %}
+                    </ol>
+                {% endif %}
+                <a href = 'change_in_income'>
+                    plan another change in income
+                </a>
+
+                <br>
+                <br>
+
+                Changes in Expenses <br>
+                {% if not sorted_changes_in_expenses %}
+                    <ul>
+                    <li> [no changes in expenses currently planned]
+                    </ul>
+                {% else %}
+                    <ol>
+                    {% for expense_change in sorted_changes_in_expenses %}
+                        <li> "{{ expense_change.name }}" - starting on {{ expense_change.start_date }} has new yearly expense of ${{ expense_change.new_yearly_expenses }}.
+                        
+                        <a href = 'change_in_expenses/{{ expense_change.pk }}'>
+                            Modify or delete
+                        </a>
+
+                    {% endfor %}
+                    </ol>
+                {% endif %}
+                <a href = 'change_in_expenses'>
+                    plan another change in expenses
+                </a>
+
+                <br>
+                <br>
+
+
+                One Time Investments <br>
+                {% if not sorted_one_time_investments %}
+                    <ul>
+                    <li> [no one-time investments currently planned]
+                    </ul>
+                {% else %}
+                    <ol>
+                    {% for investment in sorted_one_time_investments %}
+                        <li> "{{ investment.name }}" - on {{ investment.start_date }} you'll invest ${{ investment.amount }}, which will grow {{ investment.yearly_growth }}% each year,
+                        {% if investment.sell_date %}
+                            until {{ investment.sell_date }}.
+                        {% else %}
+                             indefinitely.
+                        {% endif %}
+                        
+                        <a href = 'one_time_investment/{{ investment.pk }}'>
+                            Modify or delete
+                        </a>
+
+                    {% endfor %}
+                    </ol>
+                {% endif %}
+                <a href = 'one_time_investment'>
+                    plan another one-time investment
+                </a>
+
+                <br>
+                <br>
+
+
+                Recurring Investments <br>
+                {% if not sorted_recurring_investments %}
+                    <ul>
+                    <li> [no recurring investments currently planned]
+                    </ul>
+                {% else %}
+                    <ol>
+                    {% for investment in sorted_recurring_investments %}
+
+                        {% if investment.stop_date %}
+                            <li> "{{ investment.name }}" - from {{ investment.start_date }} to {{ investment.stop_date}}, you will invest ${{ investment.amount }} {{ investment.investment_frequency }} times each year. The invested amount will grow at {{ investment.yearly_growth }}% each year.
+                        {% else %}
+                            <li> "{{ investment.name }}" - starting on {{ investment.start_date }}, you will invest ${{ investment.amount }} {{ investment.investment_frequency }} times each year. The invested amount will grow at {{ investment.yearly_growth }}% each year.
+                        {% endif %}
+
+                        {% if investment.sell_date %}
+                            The whole investment will be sold on {{ investment.sell_date }}
+                        {% endif %}
+                        
+                        <a href = 'recurring_investment/{{ investment.pk }}'>
+                            Modify or delete
+                        </a>
+
+                    {% endfor %}
+                    </ol>
+                {% endif %}
+                <a href = 'recurring_investment'>
+                    plan another recurring investment
+                </a>
+
+                <br>
+                <br>
+
+                Goals <br>
+                {% if not sorted_goals %}
+                    <ul>
+                    <li> [no goals currently planned]
+                    </ul>
+                {% else %}
+                    <ol>
+                    {% for goal in sorted_goals %}
+                        <li> "{{ goal.name }}": 
+                        {% if investment.goal_date %} 
+                            on {{ investment.goal_date }} 
+                        {% endif %}
+                        you want to have saved ${{ goal.goal_amount }}
+                        <a href = 'goal/{{ goal.pk }}'>
+                            Modify or delete
+                        </a>
+
+                    {% endfor %}
+                    </ol>
+                {% endif %}
+                <a href = 'goal'>
+                    plan another goal
+                </a>
+
+            </div>
+        </div>
+    </main>
+</body>
+
+
+{% endblock content %}

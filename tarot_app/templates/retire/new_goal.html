@@ -1,0 +1,24 @@
+{% extends "retire/header.html" %}
+
+{% block content %}
+
+{% load crispy_forms_tags %}
+
+<!--Register-->
+<body>
+    <main class='wrapper'>
+        <section class='main'>
+            <header class='header'>
+                <h1>Submit Goal</h1>
+            </header>
+            <form method='POST'>
+                {% csrf_token %}
+                {{ goal_form|crispy }}
+                <button type = 'submit'>Submit</button>
+            </form>
+        </section>
+    </main>
+</body>
+
+{% endblock %}
+
