@@ -29,7 +29,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-yf+88%0&me-18f
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
 ALLOWED_HOSTS = [
-    'thawing-dusk-38737.herokuapp.com', '127.0.0.1', 'www.bageldreams.com'
+    'thawing-dusk-38737.herokuapp.com', '127.0.0.1', 'www.bageldreams.com', 'localhost',
 ]
 
 
@@ -57,6 +57,17 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+if os.environ.get('DJANGO_DEBUG', '') == 'False':
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_HSTS_SECONDS = 1
+else:
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    SECURE_HSTS_SECONDS = 0
 
 ROOT_URLCONF = 'tarot.urls'
 
