@@ -4,15 +4,14 @@ from django.contrib import messages
 from django.http import HttpResponse
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from django.contrib.auth.decorators import login_required
 from .models import WorkCashflow, ChangeInIncome, ChangeInExpenses, OneTimeInvestment, RecurringInvestment, Goal
 from django.core import serializers
 from django.forms.models import model_to_dict
 from plotly.offline import plot
 from datetime import timedelta
+from guest_user.decorators import allow_guest_user
 import math
 import plotly.graph_objs as go
-import pdb
 import json
 import numpy as np
 
@@ -24,7 +23,6 @@ def register_request(request):
     if request.method == 'POST':
         #form = NewUserForm(request.POST)
         form = UserCreationForm(request.POST)
-        #pdb.set_trace()
         if form.is_valid():
             user = form.save()
             login(request, user)
@@ -53,7 +51,7 @@ def login_request(request):
     form = LoginForm()
     return render (request = request, template_name = 'retire/login.html', context = {'login_form':form})
 
-@login_required( login_url ='login')
+@allow_guest_user
 def home(request):
     if not request.user.workcashflow_set.exists():
         return redirect(reverse('workcashflow'))
@@ -86,7 +84,7 @@ def home(request):
 
     return render(request = request, template_name = 'retire/home.html', context = context_to_pass)
 
-@login_required( login_url ='login')
+@allow_guest_user
 def workcashflow(request):#, id=None):
 
     '''
@@ -116,15 +114,9 @@ def workcashflow(request):#, id=None):
 
         # save was successful, redirect
         return redirect(reverse('home'))
-        '''
-        new_workcashflow = form.save(commit = False)
-        new_workcashflow.user = request.user
-        new_workcashflow.save()
-        return redirect(reverse('home'))
-        '''
     return render(request = request, template_name = 'retire/income_and_spending.html', context = {'workcashflow_form':form, 'can_delete':can_delete})
 
-@login_required( login_url ='login')
+@allow_guest_user
 def changeinincome(request, id=None):
     if id:
         instance = get_object_or_404( ChangeInIncome, pk=id)
@@ -147,7 +139,7 @@ def changeinincome(request, id=None):
 
     return render(request = request, template_name = 'retire/change_in_income.html', context = {'changeinincome_form':form, 'can_delete':can_delete})
 
-@login_required( login_url ='login')
+@allow_guest_user
 def changeinexpenses(request, id=None):
     if id:
         instance = get_object_or_404( ChangeInExpenses, pk=id)
@@ -169,7 +161,7 @@ def changeinexpenses(request, id=None):
 
     return render(request = request, template_name = 'retire/change_in_expenses.html', context = {'changeinexpenses_form':form, 'can_delete':can_delete})
 
-@login_required( login_url ='login')
+@allow_guest_user
 def onetimeinvestment(request, id=None):
     if id:
         instance = get_object_or_404( OneTimeInvestment, pk=id)
@@ -192,7 +184,7 @@ def onetimeinvestment(request, id=None):
 
     return render(request = request, template_name = 'retire/one_time_investment.html', context = {'onetimeinvestment_form':form, 'can_delete':can_delete})
 
-@login_required( login_url ='login')
+@allow_guest_user
 def recurringinvestment(request, id=None):
     if id:
         instance = get_object_or_404( RecurringInvestment, pk=id)
@@ -215,7 +207,7 @@ def recurringinvestment(request, id=None):
 
     return render(request = request, template_name = 'retire/recurring_investment.html', context = {'recurringinvestment_form':form, 'can_delete':can_delete})
 
-@login_required( login_url ='login')
+@allow_guest_user
 def goal(request, id=None):
     if id:
         instance = get_object_or_404( Goal, pk=id)
@@ -264,11 +256,11 @@ def calculateDateArray(work_cashflow, goals, sorted_recurring_investments, sorte
 
 def makeSavingsPlot(request, default_num_date_buckets):
     work_cashflow = request.user.workcashflow_set.first()
-    changes_in_income = request.user.changeinincome_set.all()
-    changes_in_expenses = request.user.changeinexpenses_set.all()
-    one_time_investments = request.user.onetimeinvestment_set.all()
-    recurring_investments = request.user.recurringinvestment_set.all()
-    goals = request.user.goal_set.all()
+    changes_in_income = list(request.user.changeinincome_set.all())
+    changes_in_expenses = list(request.user.changeinexpenses_set.all())
+    one_time_investments = list(request.user.onetimeinvestment_set.all())
+    recurring_investments = list(request.user.recurringinvestment_set.all())
+    goals = list(request.user.goal_set.all())
 
     # sort the arrays #TODO: we can probably store these arrays sorted instead of resorting every time
     sorted_changes_in_income = sorted(changes_in_income, key = lambda x:x.start_date)
@@ -280,31 +272,10 @@ def makeSavingsPlot(request, default_num_date_buckets):
     date_array, date_delta, delta_length_days, num_steps_in_date_array, date_axis_start, date_axis_end = calculateDateArray( work_cashflow, goals, sorted_recurring_investments, sorted_one_time_investments, sorted_changes_in_income, sorted_changes_in_expenses, default_num_date_buckets)
     #if not changes_in_income or changes_in_expenses or one_time_investments or recurring_investments:
 
-    '''
-    # set up the x-axis array
-    start_date = work_cashflow.start_date
-    if goals:
-        goal_date = max([goal.date for goal in goals])
-    else:
-        goal_date = start_date + timedelta(days=365*10)
-
-    date_range = goal_date - start_date
-    if date_range.days < num_date_buckets: # don't give finer than 1-day axis resolution
-        num_date_buckets= date_range.days
-
-    # get increment in x-axis values, ensure that increment is made of whole number of days
-    date_delta = date_range / num_date_buckets
-    delta_days = math.ceil(date_delta / timedelta(days=1))
-    date_delta = timedelta(days = delta_days)
-
-    date_axis_start = start_date - date_delta
-    date_axis_end = goal_date + date_delta
-    date_values = [start_date + date_delta*step for step in range(num_date_ints) if start_date + date_delta*step <= goal_date ]
-    '''
 
     # assuming that work_cashflow directly contributes to savings, calculate the savings at each day
     starting_savings = work_cashflow.starting_savings
-    net_income_changes = [item for item in changes_in_income or changes_in_expenses]
+    net_income_changes = [item for item in (changes_in_income + changes_in_expenses)]
     sorted_net_income_changes = sorted(net_income_changes, key = lambda x:x.start_date)
     net_income_change_d = {}
 
@@ -454,27 +425,6 @@ def makeSavingsPlot(request, default_num_date_buckets):
                                 opacity = 0.8)
         )
 
-
-    '''
-    required = go.Scatter(x = date_values, 
-                          y = [goal.goal_amount]*len(date_values),
-                          mode = 'lines', 
-                          line = {'dash':'dash'},
-                          name = 'goal',
-                          opacity = 0.8, 
-                          marker_color = 'green')
-
-    data = [savings, required]
-
-    layout = go.Layout( paper_bgcolor='#fbfbfb',
-                        plot_bgcolor='#DDDDDD',
-                        title = '<b>' + goal.name + '</b>')
-    layout.yaxis.gridcolor = 'black'
-    layout.xaxis.gridcolor = 'black'
-    layout.xaxis.range = [date_axis_start, date_axis_end]
-    layout.title.x = 0.5
-    '''
-
     plot_div = plot({"data": data,
                     "layout": layout},
                     output_type = 'div',
@@ -483,91 +433,7 @@ def makeSavingsPlot(request, default_num_date_buckets):
     return plot_div
 
 
-'''
-@login_required( login_url ='login')
-def home(request):
-    if not request.user.goal_set.exists():
-        #pdb.set_trace()
-        return redirect(reverse('new_goal'))
-
-    user_goals = request.user.goal_set.all()
-    plot_div = []
-    #pdb.set_trace()
-    for goal in user_goals:
-        goal_plot = makeGoalPlot(goal, 150)
-        plot_div.append(goal_plot)
-    return render(request = request, template_name = 'retire/home.html', context = {"plot_div":plot_div})
-
-def makeGoalPlot(goal, num_date_ints):
-    # set up the x-axis array
-    start_date = goal.start_date
-    goal_date = goal.goal_date
-    date_range = goal_date - start_date
-    if date_range.days < num_date_ints: # don't give finer than 1-day axis resolution
-        num_date_ints= date_range.days
-
-    # get increment in x-axis values, ensure that increment is made of whole number of days
-    date_delta = date_range / num_date_ints
-    delta_days = math.ceil(date_delta / timedelta(days=1))
-    date_delta = timedelta(days = delta_days)
-
-    date_axis_start = start_date - date_delta
-    date_axis_end = goal_date + date_delta
-    date_values = [start_date + date_delta*step for step in range(num_date_ints) if start_date + date_delta*step <= goal_date ]
-
-    # calculate the amount of money at each day
-    start_money = goal.start_amount
-    net_income = goal.yearly_income - goal.yearly_expenses
-    normalized_net_income = net_income*delta_days/365
-    #pdb.set_trace()
-    normalized_interest_rate = float(1 + goal.interest_rate)**(delta_days/365) - 1 # based on https://calculate.onl/convert-annual-interest-rates/, and verified in calculation
-
-    # use closed-form-solution to geometric series to speed up this calculation
-    P = start_money  # principal
-    a = normalized_net_income  # coefficient in geometric series
-    r = 1+normalized_interest_rate  # the common ratio in geometric series
-
-    money_values = [ P*(r**n) + a*( (1 - r**n) / (1 - r) ) for n in range(len(date_values))]
-
-    # this calculation is just for reference. The above is equivalent. see https://en.wikipedia.org/wiki/Geometric_series if you need to rederive it
-    #money_values = [start_money]
-    #for step in range(len(date_values) - 1):
-        #money_values.append(money_values[-1]*(1+normalized_interest_rate) + normalized_net_income)
-
-    savings = go.Scatter(x = date_values, 
-                      y = money_values,
-                      mode = 'lines', 
-                      name = 'saved',
-                      opacity = 0.8, 
-                      marker_color = 'green')
-
-    required = go.Scatter(x = date_values, 
-                          y = [goal.goal_amount]*len(date_values),
-                          mode = 'lines', 
-                          line = {'dash':'dash'},
-                          name = 'goal',
-                          opacity = 0.8, 
-                          marker_color = 'green')
-
-    data = [savings, required]
-
-    layout = go.Layout( paper_bgcolor='#fbfbfb',
-                        plot_bgcolor='#DDDDDD',
-                        title = '<b>' + goal.name + '</b>')
-    layout.yaxis.gridcolor = 'black'
-    layout.xaxis.gridcolor = 'black'
-    layout.xaxis.range = [date_axis_start, date_axis_end]
-    layout.title.x = 0.5
-
-    plot_div = plot({"data": data,
-                    "layout": layout},
-                    output_type = 'div',
-                    include_plotlyjs=False)
-
-    return plot_div
-
-'''
-@login_required( login_url ='login')
+@allow_guest_user
 def new_goal(request):
     form = GoalForm(request.POST)
     if form.is_valid():
