@@ -18,23 +18,21 @@ class RegistrationTests(TestCase):
     def test_create_user_with_invalid_form_entry(self):
         username = 'invalid'
         password = 'test'
-        user_creation_error_str = 'Unsuccessful registration. Invalid information.'
         c = Client()
         data =  {'username': username, 'password1': password, 'password2':password}
         response = c.post(reverse('register'), data)
-        expected_url = (reverse('register'))
-        self.assertRedirects(response, expected_url)
+        expected_content = 'This password is too short'
+        self.assertContains(response, expected_content)
 
     def test_create_duplicate_user(self):
         username = 'invalid'
         password = 'Sifre.50'
-        user_creation_error_str = 'Unsuccessful registration. Invalid information.'
         c = Client()
         data =  {'username': username, 'password1': password, 'password2':password}
-        response = c.post(reverse('register'), data)
-        response = c.post(reverse('register'), data)
-        expected_url = (reverse('register'))
-        self.assertRedirects(response, expected_url)
+        c.post(reverse('register'), data)  # make this user
+        response = c.post(reverse('register'), data)  # try to make again
+        expected_content = 'user with that username already exists'
+        self.assertContains(response, expected_content)
 
 
 class LoginTests(TestCase):
@@ -54,8 +52,8 @@ class LoginTests(TestCase):
         c = Client()
         data = {'username': username, 'password': password}
         response = c.post(reverse('login'), data)
-        expected_url = (reverse('login'))
-        self.assertRedirects(response, expected_url)
+        expected_content = 'Please enter a correct username'
+        self.assertContains(response, expected_content)
 
 
 # Create your tests here.
