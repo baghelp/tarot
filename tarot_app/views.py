@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, reverse, get_object_or_404
 from .forms import NewUserForm, LoginForm, WorkCashflowForm, ChangeInIncomeForm, ChangeInExpensesForm, OneTimeInvestmentForm, RecurringInvestmentForm, GoalForm
 from django.contrib import messages
 from django.http import HttpResponse
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, backends
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import WorkCashflow, ChangeInIncome, ChangeInExpenses, OneTimeInvestment, RecurringInvestment, Goal
 from django.core import serializers
@@ -25,6 +25,7 @@ def register_request(request):
         form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
+            user.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request, user)
             messages.success(request, 'Registration successful.')
             return redirect(reverse('index'))
@@ -42,6 +43,7 @@ def login_request(request):
             data = form.cleaned_data
             user = authenticate(username = data['username'], password = data['password'])
             if user is not None:
+                user.backend = 'django.contrib.auth.backends.ModelBackend'
                 login(request, user)
                 messages.success(request, 'Login successful.')
                 return redirect(reverse('home'))
@@ -444,14 +446,3 @@ def new_goal(request):
         # do something I guess
     form = GoalForm()
     return render(request = request, template_name = 'retire/new_goal.html', context = {'goal_form':form})
-
-def signup_view(request):
-    form = UserCreationForm(request.POST)
-    if form.is_valid():
-        form.save()
-        username = form.cleaned_data.get('username')
-        password = form.cleaned_data.get('password1')
-        user = authenticate(username, password)
-        login(request, user)
-        return redirect(reverse('index'))
-    return render(request, 'retire_app/signup.html', {'form':form})

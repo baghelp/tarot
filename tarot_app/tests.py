@@ -44,8 +44,8 @@ class LoginTests(TestCase):
         user = User.objects.create_user(username = username, password = password)
         c = Client()
         data = {'username': username, 'password': password}
-        response = c.post(reverse('login'), data)
-        expected_url = (reverse('index'))
+        response = c.post(reverse('login'), data, follow=True)
+        expected_url = reverse('workcashflow')
         self.assertRedirects(response, expected_url)
 
     def test_login_user_with_invalid_form_entry(self):
