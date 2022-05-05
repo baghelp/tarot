@@ -29,11 +29,10 @@ def register_request(request):
             login(request, user)
             messages.success(request, 'Registration successful.')
             return redirect(reverse('index'))
-    #form = NewUserForm()
         else:
-            messages.error(request, 'Unsuccessful registration. Invalid information.')
-            return redirect(reverse('register'))
-    form = UserCreationForm()
+            messages.error(request, form.errors)
+    else:
+        form = UserCreationForm()
     return render (request = request, template_name = 'retire/register.html', context = {'register_form':form})
 
 def login_request(request):
@@ -49,8 +48,8 @@ def login_request(request):
                 return redirect(reverse('home'))
         else:
             messages.error(request, form.errors)
-            return redirect(reverse('login'))
-    form = LoginForm()
+    else:
+        form = LoginForm()
     return render (request = request, template_name = 'retire/login.html', context = {'login_form':form})
 
 @allow_guest_user
