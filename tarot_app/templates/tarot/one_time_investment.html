@@ -1,4 +1,4 @@
-{% extends "retire/header.html" %}
+{% extends "tarot/header.html" %}
 
 {% block content %}
 
@@ -9,12 +9,12 @@
     <main class='wrapper'>
         <section class='main'>
             <header class='header'>
-                <h1>Plan a Change in Income</h1>
+                <h1>Plan a One-Time Investment</h1>
             </header>
             <form method='POST'>
                 {% csrf_token %}
-                {{ changeinincome_form|crispy }}
-                <button type = 'submit' name = 'submit' value = 'submit'>Submit</button>
+                {{ onetimeinvestment_form|crispy }}
+                <button type = 'submit' name = 'submit' value='submit'>Submit</button>
                 {% if can_delete %}
                     <button type = 'delete' name = 'delete' value = 'delete'>Delete</button>
                 {% endif %}

@@ -1,4 +1,4 @@
-{% extends "retire/header.html" %}
+{% extends "tarot/header.html" %}
 
 {% block content %}
 
@@ -9,11 +9,11 @@
     <main class='wrapper'>
         <section class='main'>
             <header class='header'>
-                <h1>Plan a New Goal</h1>
+                <h1>Plan a Recurring Investment</h1>
             </header>
             <form method='POST'>
                 {% csrf_token %}
-                {{ goal_form|crispy }}
+                {{ recurringinvestment_form|crispy }}
                 <button type = 'submit' name = 'submit' value='submit'>Submit</button>
                 {% if can_delete %}
                     <button type = 'delete' name = 'delete' value = 'delete'>Delete</button>

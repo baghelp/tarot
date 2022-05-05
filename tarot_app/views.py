@@ -16,7 +16,7 @@ import json
 import numpy as np
 
 def index(request):
-    return render(request = request, template_name = 'retire/index.html')
+    return render(request = request, template_name = 'tarot/index.html')
 
 def register_request(request):
     #TODO: use this format (if, else with POST method) for the other requests as well
@@ -33,7 +33,7 @@ def register_request(request):
             messages.error(request, form.errors)
     else:
         form = UserCreationForm()
-    return render (request = request, template_name = 'retire/register.html', context = {'register_form':form})
+    return render (request = request, template_name = 'tarot/register.html', context = {'register_form':form})
 
 def login_request(request):
     if request.method == 'POST':
@@ -50,7 +50,7 @@ def login_request(request):
             messages.error(request, form.errors)
     else:
         form = LoginForm()
-    return render (request = request, template_name = 'retire/login.html', context = {'login_form':form})
+    return render (request = request, template_name = 'tarot/login.html', context = {'login_form':form})
 
 @allow_guest_user
 def home(request):
@@ -83,7 +83,7 @@ def home(request):
         "sorted_goals":sorted_goals,
     }
 
-    return render(request = request, template_name = 'retire/home.html', context = context_to_pass)
+    return render(request = request, template_name = 'tarot/home.html', context = context_to_pass)
 
 @allow_guest_user
 def workcashflow(request):#, id=None):
@@ -115,7 +115,7 @@ def workcashflow(request):#, id=None):
 
         # save was successful, redirect
         return redirect(reverse('home'))
-    return render(request = request, template_name = 'retire/income_and_spending.html', context = {'workcashflow_form':form, 'can_delete':can_delete})
+    return render(request = request, template_name = 'tarot/income_and_spending.html', context = {'workcashflow_form':form, 'can_delete':can_delete})
 
 @allow_guest_user
 def changeinincome(request, id=None):
@@ -138,7 +138,7 @@ def changeinincome(request, id=None):
         form.save()
         return redirect(reverse('home'))
 
-    return render(request = request, template_name = 'retire/change_in_income.html', context = {'changeinincome_form':form, 'can_delete':can_delete})
+    return render(request = request, template_name = 'tarot/change_in_income.html', context = {'changeinincome_form':form, 'can_delete':can_delete})
 
 @allow_guest_user
 def changeinexpenses(request, id=None):
@@ -160,7 +160,7 @@ def changeinexpenses(request, id=None):
         form.save()
         return redirect(reverse('home'))
 
-    return render(request = request, template_name = 'retire/change_in_expenses.html', context = {'changeinexpenses_form':form, 'can_delete':can_delete})
+    return render(request = request, template_name = 'tarot/change_in_expenses.html', context = {'changeinexpenses_form':form, 'can_delete':can_delete})
 
 @allow_guest_user
 def onetimeinvestment(request, id=None):
@@ -183,7 +183,7 @@ def onetimeinvestment(request, id=None):
         form.save()
         return redirect(reverse('home'))
 
-    return render(request = request, template_name = 'retire/one_time_investment.html', context = {'onetimeinvestment_form':form, 'can_delete':can_delete})
+    return render(request = request, template_name = 'tarot/one_time_investment.html', context = {'onetimeinvestment_form':form, 'can_delete':can_delete})
 
 @allow_guest_user
 def recurringinvestment(request, id=None):
@@ -206,7 +206,7 @@ def recurringinvestment(request, id=None):
         form.save()
         return redirect(reverse('home'))
 
-    return render(request = request, template_name = 'retire/recurring_investment.html', context = {'recurringinvestment_form':form, 'can_delete':can_delete})
+    return render(request = request, template_name = 'tarot/recurring_investment.html', context = {'recurringinvestment_form':form, 'can_delete':can_delete})
 
 @allow_guest_user
 def goal(request, id=None):
@@ -229,7 +229,7 @@ def goal(request, id=None):
         form.save()
         return redirect(reverse('home'))
 
-    return render(request = request, template_name = 'retire/goal.html', context = {'goal_form':form, 'can_delete':can_delete})
+    return render(request = request, template_name = 'tarot/goal.html', context = {'goal_form':form, 'can_delete':can_delete})
 
 def calculateDateArray(work_cashflow, goals, sorted_recurring_investments, sorted_one_time_investments, sorted_changes_in_income, sorted_changes_in_expenses, default_num_date_buckets):
 
@@ -444,4 +444,4 @@ def new_goal(request):
         return redirect(reverse('home'))
         # do something I guess
     form = GoalForm()
-    return render(request = request, template_name = 'retire/new_goal.html', context = {'goal_form':form})
+    return render(request = request, template_name = 'tarot/new_goal.html', context = {'goal_form':form})

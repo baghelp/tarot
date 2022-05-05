@@ -1,8 +1,6 @@
 :root {
     --color:#900000;
     --color-accent:#80000015;
-    --color-link:#600000;
-    --color-link:#36558F;
     --color-link:#900000;
 }
 html, body{
@@ -12,8 +10,6 @@ html, body{
     /*height:100%;*/
 }
 body{
-    /*background-image: url('../img/banner_backgnd.png');*/
-    /*background-image: linear-gradient(180deg, #fbfbfb 100%, #600000 90px);*/
     background-color: #fbfbfb;
     background-repeat: no-repeat;
 }
@@ -23,7 +19,7 @@ body{
     flex-flow: row wrap;
     font-weight: bold;
     text-align: center; 
-    color:#400000;
+    color:#222222;
     /*padding:3rem 0rem;*/
 }
 

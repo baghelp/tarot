@@ -1,4 +1,4 @@
-{% extends "retire/header.html" %}
+{% extends "tarot/header.html" %}
 
 {% block content %}
 
@@ -9,13 +9,14 @@
     <main class='wrapper'>
         <section class='main'>
             <header class='header'>
-                <h1>Submit Goal</h1>
+                <h1>Login</h1>
             </header>
             <form method='POST'>
                 {% csrf_token %}
-                {{ goal_form|crispy }}
-                <button type = 'submit'>Submit</button>
+                {{ login_form|crispy }}
+                <button type = 'submit'>Login</button>
             </form>
+            <p align='center'>If you don't have an account, <a href='register'><u>register</u></a> instead.</p>
         </section>
     </main>
 </body>
