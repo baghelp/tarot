@@ -1,2 +1,2 @@
 # tarot
-code for tarot webapp
+code for tarot webapp: bageldreams.com/tarot
