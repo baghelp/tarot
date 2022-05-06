@@ -20,4 +20,5 @@ urlpatterns = [
     path('tarot/', include('tarot_app.urls')),
     path('admin/', admin.site.urls),
     path('convert/', include('guest_user.urls')),
+    path('tarot-accounts/', include('accounts.urls')),
 ]

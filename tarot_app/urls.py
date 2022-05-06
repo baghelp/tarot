@@ -1,11 +1,11 @@
-from django.urls import path
+from django.urls import path, include
+from django.contrib.auth import views as auth_views
 
 from .import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('register', views.register_request, name='register'),
-    path('login', views.login_request, name='login'),
+    #path('register', views.register_request, name='register'),
     path('home', view=views.home, name='home'),
     path('income_and_expenses/<str:id>', views.workcashflow, name='workcashflow'),
     path('income_and_expenses', views.workcashflow, name='workcashflow'),
@@ -19,4 +19,5 @@ urlpatterns = [
     path('recurring_investment', views.recurringinvestment, name='recurringinvestment'),
     path('goal/<str:id>', views.goal, name='goal'),
     path('goal', views.goal, name='goal'),
+
 ]

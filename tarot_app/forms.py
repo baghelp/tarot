@@ -1,15 +1,16 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
+from django.forms import widgets
 from .models import WorkCashflow, ChangeInIncome, ChangeInExpenses, Goal, OneTimeInvestment, RecurringInvestment
 import datetime
 
 
+'''
 class NewUserForm(UserCreationForm):
 
     class Meta:
         model = User
-        #fields = ("username", "email", "password1", "password2")
         fields = ("username", "password1", "password2")
 
     def save(self, commit = True):
@@ -25,6 +26,7 @@ class LoginForm(AuthenticationForm):
         model = User
         #fields = ("username", "email", "password1", "password2")
         fields = ("username", "password")
+        '''
 
 class WorkCashflowForm(forms.ModelForm):
     
@@ -32,17 +34,14 @@ class WorkCashflowForm(forms.ModelForm):
         model = WorkCashflow
         fields = "__all__"
         exclude = ('user',)
+        widgets = {
+            'start_date': widgets.DateInput(attrs={'type': 'date'})
+        }
 
 
     def __init__(self, *args, **kwargs):
         super(WorkCashflowForm, self).__init__(*args, **kwargs)
-
-        self.fields['name'].initial = 'starting income and expenses'
-        self.fields['starting_savings'].initial = 0
         self.fields['starting_savings'].help_text = 'how much will you have to start?'
-        self.fields['yearly_income'].initial = 70000
-        self.fields['yearly_expenses'].initial = 50000
-        self.fields['start_date'].initial = datetime.date.today()
 
 
 class ChangeInIncomeForm(forms.ModelForm):
@@ -51,6 +50,9 @@ class ChangeInIncomeForm(forms.ModelForm):
         model = ChangeInIncome
         fields = "__all__"
         exclude = ('user',)
+        widgets = {
+            'start_date': widgets.DateInput(attrs={'type': 'date'})
+        }
 
     def __init__(self, *args, **kwargs):
         super(ChangeInIncomeForm, self).__init__(*args, **kwargs)
@@ -61,6 +63,9 @@ class ChangeInExpensesForm(forms.ModelForm):
         model = ChangeInExpenses
         fields = "__all__"
         exclude = ('user',)
+        widgets = {
+            'start_date': widgets.DateInput(attrs={'type': 'date'})
+        }
 
     def __init__(self, *args, **kwargs):
         super(ChangeInExpensesForm, self).__init__(*args, **kwargs)
@@ -81,6 +86,9 @@ class OneTimeInvestmentForm(forms.ModelForm):
         model = OneTimeInvestment
         fields = "__all__"
         exclude = ('user',)
+        widgets = {
+            'start_date': widgets.DateInput(attrs={'type': 'date'})
+        }
 
     def __init__(self, *args, **kwargs):
         super(OneTimeInvestmentForm, self).__init__(*args, **kwargs)
@@ -95,6 +103,9 @@ class RecurringInvestmentForm(forms.ModelForm):
         model = RecurringInvestment
         fields = "__all__"
         exclude = ('user',)
+        widgets = {
+            'start_date': widgets.DateInput(attrs={'type': 'date'})
+        }
 
     def __init__(self, *args, **kwargs):
         super(RecurringInvestmentForm, self).__init__(*args, **kwargs)

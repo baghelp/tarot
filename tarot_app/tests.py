@@ -1,8 +1,9 @@
+from django.test import TestCase
+'''
 from django.test import TestCase, Client
 from django.shortcuts import reverse, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-import pdb
 #from HttpRequest import request
 
 class RegistrationTests(TestCase):
@@ -54,6 +55,4 @@ class LoginTests(TestCase):
         response = c.post(reverse('login'), data)
         expected_content = 'Please enter a correct username'
         self.assertContains(response, expected_content)
-
-
-# Create your tests here.
+'''

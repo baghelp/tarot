@@ -1,4 +1,4 @@
-{% extends 'tarot/header.html' %}
+{% extends 'header.html' %}
 
 {% block content %}
 
@@ -30,9 +30,8 @@ h2{
                     <h2 text-align='center'> <b> Projection based on the following assumptions:</b> </h2> 
             </div>
             <div align = 'left'>
-                Starting Savings, Income, and Expenses <br>
                 {% for cashflow in work_cashflow %}
-                    "{{ cashflow.name }}" - starting on {{ cashflow.start_date }}, you'll have:
+                    Starting on {{ cashflow.start_date }}, you'll have:
                     <ul>
                     <li> starting savings of ${{ cashflow.starting_savings }}
                     <li> yearly income of ${{ cashflow.yearly_income }}

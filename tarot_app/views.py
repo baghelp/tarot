@@ -1,56 +1,17 @@
 from django.shortcuts import render, redirect, reverse, get_object_or_404
-from .forms import NewUserForm, LoginForm, WorkCashflowForm, ChangeInIncomeForm, ChangeInExpensesForm, OneTimeInvestmentForm, RecurringInvestmentForm, GoalForm
+from .forms import WorkCashflowForm, ChangeInIncomeForm, ChangeInExpensesForm, OneTimeInvestmentForm, RecurringInvestmentForm, GoalForm
 from django.contrib import messages
 from django.http import HttpResponse
-from django.contrib.auth import login, authenticate, backends
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .models import WorkCashflow, ChangeInIncome, ChangeInExpenses, OneTimeInvestment, RecurringInvestment, Goal
-from django.core import serializers
-from django.forms.models import model_to_dict
 from plotly.offline import plot
 from datetime import timedelta
 from guest_user.decorators import allow_guest_user
 import math
 import plotly.graph_objs as go
-import json
 import numpy as np
 
 def index(request):
     return render(request = request, template_name = 'tarot/index.html')
-
-def register_request(request):
-    #TODO: use this format (if, else with POST method) for the other requests as well
-    if request.method == 'POST':
-        #form = NewUserForm(request.POST)
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            user.backend = 'django.contrib.auth.backends.ModelBackend'
-            login(request, user)
-            messages.success(request, 'Registration successful.')
-            return redirect(reverse('index'))
-        else:
-            messages.error(request, form.errors)
-    else:
-        form = UserCreationForm()
-    return render (request = request, template_name = 'tarot/register.html', context = {'register_form':form})
-
-def login_request(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(data=request.POST)
-        if form.is_valid():
-            data = form.cleaned_data
-            user = authenticate(username = data['username'], password = data['password'])
-            if user is not None:
-                user.backend = 'django.contrib.auth.backends.ModelBackend'
-                login(request, user)
-                messages.success(request, 'Login successful.')
-                return redirect(reverse('home'))
-        else:
-            messages.error(request, form.errors)
-    else:
-        form = LoginForm()
-    return render (request = request, template_name = 'tarot/login.html', context = {'login_form':form})
 
 @allow_guest_user
 def home(request):
@@ -88,12 +49,6 @@ def home(request):
 @allow_guest_user
 def workcashflow(request):#, id=None):
 
-    '''
-    if id:
-        instance = get_object_or_404( WorkCashflow, pk=id)
-        if instance.user != request.user:
-            return HttpResponseForbidden()
-    '''
     existing_work_cashflows = request.user.workcashflow_set.all()
     if existing_work_cashflows:
         instance = existing_work_cashflows[0]

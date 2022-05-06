@@ -1,14 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from datetime import datetime
+from datetime import date
+from django.utils.timezone import now
 
 class WorkCashflow(models.Model):
-    name = models.CharField(max_length=200)
     starting_savings = models.IntegerField(default=0)
     yearly_income = models.IntegerField(default=70000)
     yearly_expenses = models.IntegerField(default=50000)
-    start_date = models.DateField()
+    start_date = models.DateField(default=now())
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -17,7 +17,7 @@ class WorkCashflow(models.Model):
 class ChangeInIncome(models.Model):
     name = models.CharField(max_length=200)
     new_yearly_income = models.IntegerField()
-    start_date = models.DateField()
+    start_date = models.DateField(default=now)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -32,7 +32,7 @@ class ChangeInIncome(models.Model):
 class ChangeInExpenses(models.Model):
     name = models.CharField(max_length=200)
     new_yearly_expenses = models.IntegerField()
-    start_date = models.DateField()
+    start_date = models.DateField(default=now())
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
@@ -60,7 +60,7 @@ class OneTimeInvestment(models.Model):
     name = models.CharField(max_length=200)
     amount = models.IntegerField()
     yearly_growth = models.DecimalField(decimal_places = 2, max_digits = 6)
-    start_date = models.DateField()
+    start_date = models.DateField(default=now())
     sell_date = models.DateField(blank=True, null=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -69,7 +69,7 @@ class OneTimeInvestment(models.Model):
 
 class RecurringInvestment(models.Model):
     name = models.CharField(max_length=200)
-    start_date = models.DateField()
+    start_date = models.DateField(default=now())
     amount = models.IntegerField()
     investment_frequency = models.IntegerField() #TODO: times per year
     yearly_growth = models.DecimalField(decimal_places = 2, max_digits = 6)
