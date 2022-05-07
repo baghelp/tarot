@@ -7,10 +7,10 @@
 <!--Register-->
 <body>
     <main class='wrapper'>
+        <div class='aside-1'>
+            <h2>Starting Income and Expenses</h2>
+        </div>
         <section class='main'>
-            <header class='header'>
-                <h1>Starting Income and Expenses</h1>
-            </header>
             <form method='POST'>
                 {% csrf_token %}
                 {{ workcashflow_form|crispy }}

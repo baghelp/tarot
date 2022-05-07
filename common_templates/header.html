@@ -15,6 +15,19 @@
         <title>Tarot</title>
     </head>
 
+    <div class = 'header'>
+    <!-- if user is logged in -->
+    {% if user_logged_in %}
+        <a href = '../tarot-accounts/logout'> log out </a>
+        <a href = '../tarot-accounts/logout'> manage account </a>
+        username
+    {% else %}
+        <a href = '../tarot-accounts/login'> log in </a>
+        <a href = '../tarot-accounts/register'> make an account </a>
+    {% endif %}
+
+    </div>
+
     {% block content %}
 
     {% endblock %}

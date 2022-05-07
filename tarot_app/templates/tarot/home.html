@@ -2,22 +2,16 @@
 
 {% block content %}
 
-<style>
-h2{
-    color: #900000;
-}
-</style>
-
-
 <body>
     <main class='wrapper'>
         <div class='aside-1'>
-                <h2 text-align='center'> <b>Projected Savings</b> </h2>
+            <h2>Projected Savings</h2>
         </div>
 
-        <section class='main'></section>
+        <!--<section class='main'></section>-->
 
-        <div class='aside-2'>
+        <!--<div class='aside-2'>-->
+        <div class='main'>
 
             <script src ="https://cdn.plot.ly/plotly-latest.min.js"></script> 
             {% autoescape off %}
@@ -27,7 +21,7 @@ h2{
             {% endautoescape %}
 
             <div class='aside-2'>
-                    <h2 text-align='center'> <b> Projection based on the following assumptions:</b> </h2> 
+                    <h2> Projection based on the following assumptions:</h2> 
             </div>
             <div align = 'left'>
                 {% for cashflow in work_cashflow %}

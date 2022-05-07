@@ -7,10 +7,10 @@
 <!--Register-->
 <body>
     <main class='wrapper'>
+        <div class='aside-1'>
+            <h2>Plan a One-Time Investment</h2>
+        </div>
         <section class='main'>
-            <header class='header'>
-                <h1>Plan a One-Time Investment</h1>
-            </header>
             <form method='POST'>
                 {% csrf_token %}
                 {{ onetimeinvestment_form|crispy }}
