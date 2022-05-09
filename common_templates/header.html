@@ -18,6 +18,7 @@
     <div class = 'header'>
         {% load guest_user %}
         <a href = '/tarot/home'><u> home </u></a>&nbsp;&nbsp;
+        <a href = '/tarot/about'><u> about </u></a>&nbsp;&nbsp;
         {% if user.is_authenticated and not user|is_guest_user %} <!-- user is a "real user" -->
             <a href = '/tarot/logout'><u> log-out </u></a>&nbsp;&nbsp;
             <a href = '/tarot/account'><u> account </u></a>&nbsp;&nbsp;

@@ -5,8 +5,8 @@ from .import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    #path('register', views.register_request, name='register'),
     path('home', view=views.home, name='home'),
+    path('about', view=views.about, name='about'),
     path('income_and_expenses/<str:id>', views.workcashflow, name='workcashflow'),
     path('income_and_expenses', views.workcashflow, name='workcashflow'),
     path('change_in_income/<str:id>', views.changeinincome, name='changeinincome'),

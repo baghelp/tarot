@@ -13,6 +13,9 @@ import numpy as np
 def index(request):
     return render(request = request, template_name = 'tarot/index.html')
 
+def about(request):
+    return render(request = request, template_name = 'tarot/about.html')
+
 @allow_guest_user
 def home(request):
     if not request.user.workcashflow_set.exists():
