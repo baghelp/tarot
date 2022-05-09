@@ -17,7 +17,7 @@ class WorkCashflow(models.Model):
 class ChangeInIncome(models.Model):
     name = models.CharField(max_length=200)
     new_yearly_income = models.IntegerField()
-    start_date = models.DateField(default=now)
+    start_date = models.DateField(default=now())
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):

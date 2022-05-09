@@ -9,11 +9,12 @@
     <main class='wrapper'>
         <div class='aside-1'>
             <h2>Register</h2>
+            (settings from the demo will transfer to your new account)
         </div>
         <section class='main'>
             <form method='POST'>
                 {% csrf_token %}
-                {{ register_form|crispy }}
+                {{ form|crispy }}
                 <!--<button class = 'btn btn-primary' type = 'submit'>Register</button>-->
                 <button type = 'submit'>Register</button>
             </form>

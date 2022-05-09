@@ -171,3 +171,6 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 LOGIN_REDIRECT_URL = 'home'
 LOGIN_URL = 'login'
 LOGOUT_REDIRECT_URL = 'index'
+
+# Settings for guest user registration
+GUEST_USER_CONVERT_REDIRECT_URL = 'home'

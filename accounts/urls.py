@@ -5,6 +5,7 @@ from .import views
 
 urlpatterns = [
     path('register', views.register_request, name='register'),
+    path('account', views.account_management, name='account'),
     path(
         'login/', 
         auth_views.LoginView.as_view(template_name='tarot_accounts/login.html'), 

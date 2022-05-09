@@ -4,17 +4,17 @@
 
 {% load crispy_forms_tags %}
 
+<!--Register-->
 <body>
     <main class='wrapper'>
         <div class='aside-1'>
-            <h2>Change Password</h2>
+            <h2>Manage Account</h2>
         </div>
         <section class='main'>
-            <form method='POST'>
-                {% csrf_token %}
-                {{ form|crispy }}
-                <button type = 'submit'>Change Password</button>
-            </form>
+        <p>
+            Welcome {{user.username}}! <br><br><br>
+            <a href = 'password_change'><u> change your password </u></a> <br>
+        </p>
         </section>
     </main>
 </body>

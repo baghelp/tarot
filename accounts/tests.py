@@ -2,6 +2,7 @@ from django.test import TestCase, Client
 from django.shortcuts import reverse, redirect
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.utils.timezone import now
 
 class RegistrationTests(TestCase):
     def test_create_user_with_valid_form_entry(self):
@@ -32,6 +33,43 @@ class RegistrationTests(TestCase):
         expected_content = 'user with that username already exists'
         self.assertContains(response, expected_content)
 
+class ConversionWorkflowTests(TestCase):
+    def test_convert_user(self):
+        c = Client()
+        home_response = c.post(reverse('home'))  # visit the homepage
+        expected_url = reverse('workcashflow')
+        self.assertRedirects(home_response, expected_url)
+
+        starting_savings = 42
+        yearly_income = 100
+        yearly_expenses = 100
+        start_date = now().date()
+
+        data = {'starting_savings': starting_savings,
+                'yearly_income':yearly_income, 
+                'yearly_expenses':yearly_expenses, 
+                'start_date':start_date,
+                'submit':'submit'}
+
+        cashflow_response = c.post(home_response.url, data, follow=True)
+        expected_url = reverse('home')
+        self.assertRedirects(cashflow_response, expected_url)
+
+        expected_content = "<a href = '/tarot/convert'><u> register </u></a>"
+        self.assertContains(cashflow_response, expected_content)
+
+        username = 'michael'
+        password = 'good_enough'
+        data = {'username': username, 'password1': password, 'password2':password}
+        convert_response = c.post(reverse('guest_user_convert'), data)
+        expected_url = reverse('home')
+        self.assertRedirects(convert_response, expected_url)
+
+        home_response = c.get(convert_response.url)
+        expected_content = username
+        self.assertContains(home_response, expected_content)
+        expected_content = starting_savings
+        self.assertContains(home_response, starting_savings)
 
 class LoginTests(TestCase):
     def test_login_user_with_valid_form_entry(self):
