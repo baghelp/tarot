@@ -1,8 +1,9 @@
 :root {
-    --color:#900000;
+    --color:#b00000;
     --color-accent:#80000015;
-    --color-link:#900000;
+    --color-link:#058ed9;  /* light blue */
 }
+
 html, body{
     margin:0;
     padding:0;
@@ -15,7 +16,7 @@ body{
 }
 
 h2{
-    color: #900000;
+    color: var(--color);
     text-align: center;
 }
 
@@ -35,7 +36,7 @@ h2{
 .header {
     width:100%;
     text-align: right; 
-    background-color: #cccccc;
+    background-color: #fbfbfbfb;
     color: #222222;
 }
 
