@@ -17,6 +17,7 @@ body{
 
 h2{
     color: var(--color);
+    color: #b00000;
     text-align: center;
 }
 
@@ -36,7 +37,7 @@ h2{
 .header {
     width:100%;
     text-align: right; 
-    background-color: #fbfbfbfb;
+    background-color: #e5e5e5;
     color: #222222;
 }
 
