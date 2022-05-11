@@ -47,7 +47,9 @@ class ChangeInExpenses(models.Model):
 class Goal(models.Model):
     name = models.CharField(max_length=200)
     goal_amount = models.IntegerField()
+    dollar_value_date = models.DateField(default=now())
     goal_date = models.DateField(blank=True, null=True)
+    assumed_yearly_inflation = models.IntegerField(default=3)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     '''
         default=WorkCashflow(name='work', start_amount=0, yearly_income=0, yearly_expenses=0, start_date=datetime.today()))
