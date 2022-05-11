@@ -79,6 +79,10 @@ class GoalForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(GoalForm, self).__init__(*args, **kwargs)
+        self.fields['assumed_yearly_inflation'].help_text = 'eg, enter \'3\' for 3% inflation each year'
+        self.fields['dollar_value_date'].label = 'What dollar is your goal set in?'
+        self.fields['dollar_value_date'].help_text = 'eg, 1970 dollars or 2022 dollars'
+        self.fields['goal_date'].help_text = 'when you want to meet your goal'
 
 class OneTimeInvestmentForm(forms.ModelForm):
     
