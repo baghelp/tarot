@@ -27,14 +27,14 @@ def home(request):
     work_cashflow = request.user.workcashflow_set.all()
     changes_in_income = request.user.changeinincome_set.all()
     changes_in_expenses = request.user.changeinexpenses_set.all()
-    one_time_investments = request.user.onetimeinvestment_set.all()
-    recurring_investments = request.user.recurringinvestment_set.all()
+    #one_time_investments = request.user.onetimeinvestment_set.all()
+    #recurring_investments = request.user.recurringinvestment_set.all()
     goals = request.user.goal_set.all()
 
     sorted_changes_in_income = sorted(changes_in_income, key = lambda x:x.start_date)
     sorted_changes_in_expenses = sorted(changes_in_expenses, key = lambda x:x.start_date)
-    sorted_one_time_investments = sorted(one_time_investments, key = lambda x:x.start_date)
-    sorted_recurring_investments = sorted(recurring_investments, key = lambda x:x.start_date)
+    #sorted_one_time_investments = sorted(one_time_investments, key = lambda x:x.start_date)
+    #sorted_recurring_investments = sorted(recurring_investments, key = lambda x:x.start_date)
     sorted_goals = goals #sorted(goals, key = lambda x:x.goal_date)# TODO: not sorted at all
 
     context_to_pass = {
@@ -42,8 +42,8 @@ def home(request):
         "work_cashflow":work_cashflow,
         "sorted_changes_in_income":sorted_changes_in_income,
         "sorted_changes_in_expenses":sorted_changes_in_expenses,
-        "sorted_one_time_investments":sorted_one_time_investments,
-        "sorted_recurring_investments":sorted_recurring_investments,
+        #"sorted_one_time_investments":sorted_one_time_investments,
+        #"sorted_recurring_investments":sorted_recurring_investments,
         "sorted_goals":sorted_goals,
     }
 
@@ -210,7 +210,7 @@ def calculateDateArray(start_date, default_num_dates, goals):
 
     return date_array, date_axis_start, date_axis_end
 
-def calculate_savings_due_to_income(work_cashflow, changes_in_income, changes_in_expenses, date_array):
+def calculate_amount_to_distribute(work_cashflow, changes_in_income, changes_in_expenses, date_array):
     # assuming that work_cashflow directly contributes to savings, calculate the savings at each day
     starting_savings = work_cashflow.starting_savings
     net_income_changes = [item for item in (changes_in_income + changes_in_expenses)]
@@ -233,76 +233,47 @@ def calculate_savings_due_to_income(work_cashflow, changes_in_income, changes_in
         normalized_net_income_d[item.start_date] = normalized_income - normalized_expenses
     normalized_net_income_d[date_array[-1]] = 0  # bookend signals the end of calculations
 
-    savings_array = [starting_savings]
+    amount_to_distribute = [starting_savings]
     for index, key in enumerate(normalized_net_income_d.keys()):
         this_date = key
         if index > 0:
             num_steps = math.ceil( (this_date - prev_date) / timedelta(days = 1) )
-            savings_array += [savings_array[-1] + normalized_net_income*step for step in range(num_steps)]
+            amount_to_distribute += [amount_to_distribute[-1] + normalized_net_income*step for step in range(1,num_steps)]
         normalized_net_income = normalized_net_income_d[key]
-        prev_date = this_date
-    return savings_array
+        prev_date = this_date - timedelta(days=1)
+    return np.array(amount_to_distribute)
 
-def calculate_one_time_investments(sorted_one_time_investments, savings_array, date_array):
-    one_time_investment_values = []
-    for index, item in enumerate(sorted_one_time_investments):
-        start_index = np.searchsorted(date_array, item.start_date)
-        savings_array[start_index+1:] = [val - item.amount for val in savings_array[start_index+1:]]
+def calculate_savings(work_cashflow, amount_to_distribute):
+    savings = np.clip(amount_to_distribute, a_min=0, a_max=work_cashflow.amount_kept_in_savings)
+    amount_to_distribute_remaining = amount_to_distribute - savings
+    return savings, amount_to_distribute_remaining
 
-        if item.sell_date:
-            end_date = item.sell_date
-        else:
-            end_date = date_array[-1]
-        num_steps = int( (end_date - item.start_date) / timedelta(days = 1) )
-        num_zeros = int( (item.start_date-date_array[0]) / timedelta(days = 1) ) + 1
+def calculate_retirement(work_cashflow, amount_to_distribute_remaining, date_array):
+    added_daily_to_retirement = work_cashflow.added_yearly_to_retirement / 365
+    add_to_retirement = np.array([added_daily_to_retirement]*len(date_array))
+    cumulative_added_to_retirement = np.clip(np.cumsum(add_to_retirement), a_min=0, a_max=amount_to_distribute_remaining)
+    amount_to_distribute_remaining = amount_to_distribute_remaining - cumulative_added_to_retirement
+    retirement_delta = np.diff(cumulative_added_to_retirement)
+    retirement = [work_cashflow.starting_retirement + retirement_delta[0]]
+    daily_growth_rate = (1+float(work_cashflow.retirement_yearly_growth_rate)/100)**(1/365)
+    for delta in retirement_delta[0:]:
+        retirement.append(retirement[-1]*daily_growth_rate + delta)
+    return np.array(retirement), amount_to_distribute_remaining
 
 
-        daily_growth_rate = (1+float(item.yearly_growth)/100)**(1/365)
-
-        one_time_investment_values.append( [0]*num_zeros + [item.amount* (daily_growth_rate**step) for step in range(num_steps)] )
-    return savings_array, one_time_investment_values
-
-def calculate_recurring_investments(sorted_recurring_investments, savings_array, date_array):
-    recurring_investment_values = []
-    for index, item in enumerate(sorted_recurring_investments):
-        start_index = np.searchsorted(date_array, item.start_date)
-
-        if item.sell_date and item.stop_date:
-            end_date = min( item.sell_date, item.stop_date )
-        elif item.sell_date:
-            end_date = item.sell_date
-        elif item.stop_date:
-            end_date = item.stop_date
-        else:
-            end_date = date_array[-1]
-
-        num_steps = int((end_date - item.start_date) / timedelta(days = 1))
-        num_zeros = int( (item.start_date-date_array[0]) / timedelta(days = 1) ) + 1
-
-        daily_growth_rate = (1+float(item.yearly_growth)/100)**(1/365)
-        investment_array = [0]*num_zeros
-
-        days_per_investment_period = math.ceil(365 / item.investment_frequency)
-        for investment_period in range(math.ceil(num_steps / days_per_investment_period)):
-            savings_array[start_index+1:] = [val - item.amount for val in savings_array[start_index+1:]]
-            investment_array.append( investment_array[-1] + item.amount)
-
-            for day in range(days_per_investment_period-1):
-                if len(investment_array) < num_zeros + num_steps:
-                    investment_array.append(investment_array[-1]*daily_growth_rate)
-                else:
-                    break
-            start_index = start_index + days_per_investment_period
-
-        recurring_investment_values.append(investment_array)
-    return savings_array, recurring_investment_values
+def calculate_money_market(work_cashflow, amount_to_distribute_remaining, date_array):
+    money_market_investment = np.diff(amount_to_distribute_remaining)
+    daily_growth_rate = (1+float(work_cashflow.other_investment_yearly_growth_rate)/100)**(1/365)
+    money_market = [amount_to_distribute_remaining[0]]
+    for delta in money_market_investment:
+        money_market.append(money_market[-1]*daily_growth_rate + delta)
+    return np.array(money_market)
 
 def calculate_goal_array(goals, date_array):
     goals_array = []
     for goal in goals:
         daily_growth_rate = (1+float(goal.assumed_yearly_inflation)/100)**(1/365)
         start_date = date_array[0]
-        #breakpoint()
         days_from_start_to_value_date = int( (start_date - goal.dollar_value_date) / timedelta(days=1))
         value_at_start_date = goal.goal_amount*daily_growth_rate**days_from_start_to_value_date
 
@@ -311,41 +282,30 @@ def calculate_goal_array(goals, date_array):
         goals_array.append(goal_array)
     return goals_array
 
+
 def makeSavingsPlot(request, default_num_dates):
     work_cashflow = request.user.workcashflow_set.first()
     changes_in_income = list(request.user.changeinincome_set.all())
     changes_in_expenses = list(request.user.changeinexpenses_set.all())
-    one_time_investments = list(request.user.onetimeinvestment_set.all())
-    recurring_investments = list(request.user.recurringinvestment_set.all())
+    #one_time_investments = list(request.user.onetimeinvestment_set.all())
+    #recurring_investments = list(request.user.recurringinvestment_set.all())
     goals = list(request.user.goal_set.all())
 
     # sort the arrays #TODO: we can probably store these arrays sorted instead of resorting every time
     sorted_changes_in_income = sorted(changes_in_income, key = lambda x:x.start_date)
     sorted_changes_in_expenses = sorted(changes_in_expenses, key = lambda x:x.start_date)
-    sorted_one_time_investments = sorted(one_time_investments, key = lambda x:x.start_date)
-    sorted_recurring_investments = sorted(recurring_investments, key = lambda x:x.start_date)
-    earliest_start_date = min([item.start_date for item in [work_cashflow] or recurring_investments or one_time_investments])
+    #sorted_one_time_investments = sorted(one_time_investments, key = lambda x:x.start_date)
+    #sorted_recurring_investments = sorted(recurring_investments, key = lambda x:x.start_date)
 
-    date_array, date_axis_start, date_axis_end = calculateDateArray( earliest_start_date, default_num_dates, goals)
+    date_array, date_axis_start, date_axis_end = calculateDateArray( work_cashflow.start_date, default_num_dates, goals)
 
-    savings_array = calculate_savings_due_to_income(work_cashflow, changes_in_income, changes_in_expenses, date_array)
-    savings_array, one_time_investment_values = calculate_one_time_investments(
-        sorted_one_time_investments, 
-        savings_array,
-        date_array)
-    savings_array, recurring_investment_values = calculate_recurring_investments(
-        sorted_recurring_investments, 
-        savings_array,
-        date_array)
+    amount_to_distribute = calculate_amount_to_distribute(work_cashflow, changes_in_income, changes_in_expenses, date_array)
+    savings_array, amount_to_distribute_remaining = calculate_savings(work_cashflow, amount_to_distribute)
+    retirement_array, amount_to_distribute_remaining =  calculate_retirement(work_cashflow, amount_to_distribute_remaining, date_array)
+    money_market_array = calculate_money_market(work_cashflow, amount_to_distribute_remaining, date_array)
     goals_values = calculate_goal_array(goals, date_array)
 
-
-    arr = np.array( [savings_array])
-    for item in one_time_investment_values:
-        arr = np.append(arr, [item], axis=0)
-    for item in recurring_investment_values:
-        arr = np.append(arr, [item], axis=0)
-    net_worth_array = list(arr.sum(axis = 0))
+    net_worth_array = savings_array + retirement_array + money_market_array
 
     net_worth = go.Scatter(x = date_array, 
                       y = net_worth_array,
@@ -360,6 +320,18 @@ def makeSavingsPlot(request, default_num_dates):
                       name = 'savings',
                       opacity = 0.8)
 
+    retirement = go.Scatter(x = date_array, 
+                      y = retirement_array,
+                      mode = 'lines', 
+                      name = 'retirement',
+                      opacity = 0.8)
+
+    money_market = go.Scatter(x = date_array, 
+                      y = money_market_array,
+                      mode = 'lines', 
+                      name = 'investments',
+                      opacity = 0.8)
+
     layout = go.Layout( paper_bgcolor='#fbfbfb',
                         plot_bgcolor='#DDDDDD',
                         margin = go.layout.Margin( t=0),
@@ -369,7 +341,8 @@ def makeSavingsPlot(request, default_num_dates):
     layout.xaxis.gridcolor = 'black'
     layout.xaxis.range = [date_axis_start, date_axis_end]
     layout.title.x = 0.5
-    data = [net_worth, savings]
+    data = [net_worth, savings, retirement, money_market]
+    '''
     for i, item in enumerate(one_time_investment_values):
         data.append( go.Scatter(x = date_array,
                                 y = item,
@@ -377,16 +350,8 @@ def makeSavingsPlot(request, default_num_dates):
                                 name = 'investment: ' + sorted_one_time_investments[i].name,
                                 opacity = 0.8)
         )
+        '''
       
-
-    for i, item in enumerate(recurring_investment_values):
-        data.append( go.Scatter(x = date_array,
-                                y = item,
-                                mode = 'lines',
-                                name = sorted_recurring_investments[i].name,
-                                opacity = 0.8)
-        )
-
     for i, item in enumerate(goals_values):
         data.append( go.Scatter(x = date_array,
                                 y = item,

@@ -89,6 +89,7 @@
                 <br>
 
 
+<!--
                 One Time Investments <br>
                 {% if not sorted_one_time_investments %}
                     <ul>
@@ -117,40 +118,7 @@
 
                 <br>
                 <br>
-
-
-                Recurring Investments <br>
-                {% if not sorted_recurring_investments %}
-                    <ul>
-                    <li> [no recurring investments currently planned]
-                    </ul>
-                {% else %}
-                    <ol>
-                    {% for investment in sorted_recurring_investments %}
-
-                        {% if investment.stop_date %}
-                            <li> "{{ investment.name }}" - from {{ investment.start_date }} to {{ investment.stop_date}}, you will invest ${{ investment.amount }} {{ investment.investment_frequency }} times each year. The invested amount will grow at {{ investment.yearly_growth }}% each year.
-                        {% else %}
-                            <li> "{{ investment.name }}" - starting on {{ investment.start_date }}, you will invest ${{ investment.amount }} {{ investment.investment_frequency }} times each year. The invested amount will grow at {{ investment.yearly_growth }}% each year.
-                        {% endif %}
-
-                        {% if investment.sell_date %}
-                            The whole investment will be sold on {{ investment.sell_date }}
-                        {% endif %}
-                        
-                        <a href = 'recurring_investment/{{ investment.pk }}'>
-                            Modify or delete
-                        </a>
-
-                    {% endfor %}
-                    </ol>
-                {% endif %}
-                <a href = 'recurring_investment'>
-                    plan another recurring investment
-                </a>
-
-                <br>
-                <br>
+                -->
 
                 Goals <br>
                 {% if not sorted_goals %}

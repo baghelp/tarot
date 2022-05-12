@@ -41,7 +41,12 @@ class WorkCashflowForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(WorkCashflowForm, self).__init__(*args, **kwargs)
-        self.fields['starting_savings'].help_text = 'how much will you have to start?'
+        self.fields['starting_savings'].help_text = 'how much is in your savings to start?'
+        self.fields['starting_retirement'].help_text = 'how much is in your retirement account to start?'
+        self.fields['amount_kept_in_savings'].help_text = 'how much do you intend to keep in savings?'
+        self.fields['added_yearly_to_retirement'].help_text = 'how much do you intend to contribute to retirement?'
+        self.fields['retirement_yearly_growth_rate'].help_text = 'eg, enter \'3\' for 3% growth each year'
+        self.fields['other_investment_yearly_growth_rate'].help_text = 'eg, enter \'3\' for 3% growth each year'
 
 
 class ChangeInIncomeForm(forms.ModelForm):
