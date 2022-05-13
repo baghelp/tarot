@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'tarot_app',
     'accounts',
     'django.contrib.admin',
+    'django.contrib.humanize',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',

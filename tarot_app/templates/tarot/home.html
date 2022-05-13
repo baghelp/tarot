@@ -1,6 +1,7 @@
 {% extends 'header.html' %}
 
 {% block content %}
+{% load humanize %}
 
 <body>
     <main class='wrapper'>
@@ -27,14 +28,21 @@
                 {% for cashflow in work_cashflow %}
                     Starting on {{ cashflow.start_date }}, you'll have:
                     <ul>
-                    <li> starting savings of ${{ cashflow.starting_savings }}
-                    <li> yearly income of ${{ cashflow.yearly_income }}
-                    <li> yearly expenses of ${{ cashflow.yearly_expenses }}
+                        <li> starting savings of <b>${{ cashflow.starting_savings|intcomma }}</b>
+                        <li> starting retirement of <b>${{ cashflow.starting_retirement|intcomma }} </b>
+                        <li> yearly income of <b>${{ cashflow.yearly_income|intcomma }}</b>
+                        <li> yearly expenses of <b>${{ cashflow.yearly_expenses|intcomma }}</b>
+                    </ul>
+                    your investment plans are:
+                    <ul>
+                        <li> keep your savings at <b>${{ cashflow.amount_kept_in_savings|intcomma }}</b>
+                        <li> add <b>${{ cashflow.added_yearly_to_retirement|intcomma }}</b> to retirement each year if possible, and you expect this to grow at <b>{{ cashflow.retirement_yearly_growth_rate }}%</b> each year
+                        <li> invest whatever remains. You expect this to grow at <b>{{ cashflow.other_investment_yearly_growth_rate }}%</b> each year
                     </ul>
                 <a href = 'income_and_expenses'>
                     Modify or delete
                 </a>
-                 your starting savings, income, and expenses
+                 your starting savings, income, expenses, or investment plan
                 {% endfor %}
 
                 <br>
@@ -48,7 +56,7 @@
                 {% else %}
                     <ol>
                     {% for income_change in sorted_changes_in_income %}
-                        <li> "{{ income_change.name }}" - starting on {{ income_change.start_date }} your new yearly income will be ${{ income_change.new_yearly_income }}.
+                        <li> "<b>{{ income_change.name }}</b>" - starting on <b>{{ income_change.start_date }}</b> your new yearly income will be <b>${{ income_change.new_yearly_income|intcomma }}</b>.
                         
                         <a href = 'change_in_income/{{ income_change.pk }}'>
                             Modify or delete
@@ -72,7 +80,7 @@
                 {% else %}
                     <ol>
                     {% for expense_change in sorted_changes_in_expenses %}
-                        <li> "{{ expense_change.name }}" - starting on {{ expense_change.start_date }} has new yearly expense of ${{ expense_change.new_yearly_expenses }}.
+                        <li> "<b>{{ expense_change.name }}</b>" - starting on <b>{{ expense_change.start_date }}</b> has new yearly expense of <b>${{ expense_change.new_yearly_expenses|intcomma }}</b>.
                         
                         <a href = 'change_in_expenses/{{ expense_change.pk }}'>
                             Modify or delete
@@ -128,11 +136,11 @@
                 {% else %}
                     <ol>
                     {% for goal in sorted_goals %}
-                        <li> "{{ goal.name }}": 
+                        <li> "<b>{{ goal.name }}</b>": 
                         {% if investment.goal_date %} 
-                            on {{ investment.goal_date }} 
+                            on <b>{{ investment.goal_date }}</b> 
                         {% endif %}
-                        you want to have saved ${{ goal.goal_amount }}
+                        you want to save <b>${{ goal.goal_amount|intcomma }}</b> in <b>{{ goal.dollar_value_date.year }}-dollars</b>.
                         <a href = 'goal/{{ goal.pk }}'>
                             Modify or delete
                         </a>

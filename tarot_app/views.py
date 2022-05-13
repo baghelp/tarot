@@ -225,9 +225,9 @@ def calculate_amount_to_distribute(work_cashflow, changes_in_income, changes_in_
     normalized_net_income_d[work_cashflow.start_date] = normalized_income - normalized_expenses
     for item in sorted_net_income_changes:
         if isinstance(item, ChangeInIncome):
-            normalized_income = item.new_yearly_income * delta_length_days / 365
+            normalized_income = item.new_yearly_income * 1 / 365
         elif isinstance(item, ChangeInExpenses):
-            normalized_expenses = item.new_yearly_expenses * delta_length_days / 365
+            normalized_expenses = item.new_yearly_expenses * 1 / 365
         else:
             raise TypeError('The sorted_net_income_changes array should be made of exclusively income or expenses')
         normalized_net_income_d[item.start_date] = normalized_income - normalized_expenses

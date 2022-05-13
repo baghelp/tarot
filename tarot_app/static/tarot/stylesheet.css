@@ -9,7 +9,6 @@ html, body{
     margin:0;
     padding:0;
     width:100%;
-    /*height:100%;*/
 }
 body{
     background-color: #fbfbfb;
@@ -25,7 +24,6 @@ h2{
 .wrapper {
     display: flex;  
     flex-flow: row wrap;
-    font-weight: bold;
     text-align: center; 
     color:#222222;
     padding:1rem 0rem;
