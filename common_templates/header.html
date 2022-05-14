@@ -22,7 +22,7 @@
         {% if user.is_authenticated and not user|is_guest_user %} <!-- user is a "real user" -->
             <a href = '/tarot/logout'><u> log-out </u></a>&nbsp;&nbsp;
             <a href = '/tarot/account'><u> account </u></a>&nbsp;&nbsp;
-            <b>logged in as {{ user.username }} <b>
+            <b>logged in as {{ user.username }} </b>
         {% elif user.is_authenticated %} <!-- user is guest user -->
             <a href = '/tarot/login'><u> log-in </u></a> &nbsp;&nbsp;
             <a href = '/tarot/convert'><u> register </u></a>&nbsp;&nbsp;
