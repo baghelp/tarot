@@ -77,14 +77,23 @@ def workcashflow(request):#, id=None):
 
 @allow_guest_user
 def changeinincome(request, id=None):
-    if id:
+    if id:  #user is accessing an existing change in income
         instance = get_object_or_404( ChangeInIncome, pk=id)
         if instance.user != request.user:
             return HttpResponseForbidden()
         can_delete = True
     else:
         can_delete = False
-        instance = ChangeInIncome(user = request.user)
+
+        ordered_change_in_income = request.user.changeinincome_set.order_by('-start_date')
+        existing_work_cashflow = request.user.workcashflow_set.all()
+        if ordered_change_in_income:
+            initial_income = ordered_change_in_income[0].new_yearly_income
+        elif existing_work_cashflow:
+            initial_income = existing_work_cashflow[0].yearly_income
+        else:
+            initial_income = 0
+        instance = ChangeInIncome(user = request.user, new_yearly_income = initial_income)
 
     form = ChangeInIncomeForm(request.POST or None, instance = instance)
     if can_delete and request.POST.get('delete'):
@@ -107,7 +116,15 @@ def changeinexpenses(request, id=None):
         can_delete = True
     else:
         can_delete = False
-        instance = ChangeInExpenses(user = request.user)
+        ordered_change_in_expenses = request.user.changeinexpenses_set.order_by('-start_date')
+        existing_work_cashflow = request.user.workcashflow_set.all()
+        if ordered_change_in_expenses:
+            initial_expenses = ordered_change_in_expenses[0].new_yearly_expenses
+        elif existing_work_cashflow:
+            initial_expenses = existing_work_cashflow[0].yearly_expenses
+        else:
+            initial_expenses = 0
+        instance = ChangeInExpenses(user = request.user, new_yearly_expenses = initial_expenses)
 
     form = ChangeInExpensesForm(request.POST or None, instance = instance)
     if can_delete and request.POST.get('delete'):

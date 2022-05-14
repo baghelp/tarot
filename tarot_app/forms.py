@@ -5,29 +5,6 @@ from django.forms import widgets
 from .models import WorkCashflow, ChangeInIncome, ChangeInExpenses, Goal, OneTimeInvestment, RecurringInvestment
 import datetime
 
-
-'''
-class NewUserForm(UserCreationForm):
-
-    class Meta:
-        model = User
-        fields = ("username", "password1", "password2")
-
-    def save(self, commit = True):
-        user = super(NewUserForm, self).save(commit = False)
-        #user.email = self.cleaned_data['email']
-        if commit:
-            user.save()
-        return user
-
-class LoginForm(AuthenticationForm):
-
-    class Meta:
-        model = User
-        #fields = ("username", "email", "password1", "password2")
-        fields = ("username", "password")
-        '''
-
 class WorkCashflowForm(forms.ModelForm):
     
     class Meta:
@@ -43,10 +20,13 @@ class WorkCashflowForm(forms.ModelForm):
         super(WorkCashflowForm, self).__init__(*args, **kwargs)
         self.fields['starting_savings'].help_text = 'how much is in your savings to start?'
         self.fields['starting_retirement'].help_text = 'how much is in your retirement account to start?'
+        self.fields['yearly_income'].help_text = 'input your income after taxes'
         self.fields['amount_kept_in_savings'].help_text = 'how much do you intend to keep in savings?'
         self.fields['added_yearly_to_retirement'].help_text = 'how much do you intend to contribute to retirement?'
-        self.fields['retirement_yearly_growth_rate'].help_text = 'eg, enter \'3\' for 3% growth each year'
-        self.fields['other_investment_yearly_growth_rate'].help_text = 'eg, enter \'3\' for 3% growth each year'
+        self.fields['retirement_yearly_growth_rate'].help_text = 'eg, enter \'8\' for 8% growth each year'
+        self.fields['retirement_yearly_growth_rate'].label = 'Retirement yearly growth rate (%)'
+        self.fields['other_investment_yearly_growth_rate'].help_text = 'eg, enter \'8\' for 8% growth each year'
+        self.fields['other_investment_yearly_growth_rate'].label = 'Other investments yearly growth rate (%)'
 
 
 class ChangeInIncomeForm(forms.ModelForm):
