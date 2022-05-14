@@ -179,5 +179,5 @@ GUEST_USER_CONVERT_REDIRECT_URL = 'home'
 
 # Google Analytics
 GOOGLE_ANALYTICS = {
-    'google_analytics_id': 'G-C7L8RB9KPE',
+    'google_analytics_id': 'UA-228709231-1',
 }
