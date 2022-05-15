@@ -352,6 +352,7 @@ def makeSavingsPlot(request, default_num_dates):
     layout = go.Layout( paper_bgcolor='#fbfbfb',
                         plot_bgcolor='#DDDDDD',
                         margin = go.layout.Margin( t=0),
+                        legend = dict(x = 0, y = 1, bgcolor = 'rgba(0,0,0,0)'),
                         )
 
     layout.yaxis.gridcolor = 'black'
