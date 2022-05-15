@@ -9,10 +9,11 @@
     <main class='wrapper'>
         <div class='aside-1'>
             <h2>Starting Income, Expenses, and Investment plan</h2>
-            Note: Tarot assumes you will use your income to build an emergency fund equal to "Amount kept in savings", use any leftover money to contribute to retirement, and then invest any remaining money. Please see the <a href='about'> about </a> page if you're confused by this.
         </div>
-            
         <section class='main'>
+            <p>
+            Note: Tarot assumes you will use your income to build an emergency fund equal to "Amount kept in savings", then contribute to retirement, and then invest any remaining money. Please see the <a href='about'> about </a> page if you're confused by this. 
+            </p>
             <form method='POST'>
                 {% csrf_token %}
                 {{ workcashflow_form|crispy }}
