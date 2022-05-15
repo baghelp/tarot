@@ -1,1 +1,1 @@
-web: gunicorn tarot.wsgi --log-file -
+web: gunicorn tarot.wsgi --log-file - --preload
