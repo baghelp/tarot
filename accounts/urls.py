@@ -26,4 +26,6 @@ urlpatterns = [
         auth_views.PasswordChangeDoneView.as_view(template_name='tarot_accounts/password_change_done.html'),
         name='password_change_done',
     ),
+    path('delete_account', views.delete_account, name='delete_account'),
+    path('delete_account_done', views.delete_account_done, name='delete_account_done'),
 ]

@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, reverse, get_object_or_404
-from .forms import WorkCashflowForm, ChangeInIncomeForm, ChangeInExpensesForm, OneTimeInvestmentForm, RecurringInvestmentForm, GoalForm
+from .forms import WorkCashflowForm, ChangeInIncomeForm, ChangeInExpensesForm, GoalForm
 from django.contrib import messages
 from django.http import HttpResponse
-from .models import WorkCashflow, ChangeInIncome, ChangeInExpenses, OneTimeInvestment, RecurringInvestment, Goal
+from .models import WorkCashflow, ChangeInIncome, ChangeInExpenses, Goal
 from plotly.offline import plot
 from datetime import timedelta
 from guest_user.decorators import allow_guest_user

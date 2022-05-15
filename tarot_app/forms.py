@@ -1,8 +1,7 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.forms import widgets
-from .models import WorkCashflow, ChangeInIncome, ChangeInExpenses, Goal, OneTimeInvestment, RecurringInvestment
+from .models import WorkCashflow, ChangeInIncome, ChangeInExpenses, Goal
 import datetime
 
 class WorkCashflowForm(forms.ModelForm):
@@ -69,6 +68,7 @@ class GoalForm(forms.ModelForm):
         self.fields['dollar_value_date'].help_text = 'eg, 1970 dollars or 2022 dollars'
         self.fields['goal_date'].help_text = 'when you want to meet your goal'
 
+'''
 class OneTimeInvestmentForm(forms.ModelForm):
     
     class Meta:
@@ -105,3 +105,4 @@ class RecurringInvestmentForm(forms.ModelForm):
         self.fields['stop_date'].help_text = 'when will you stop adding money? (optional)'
         self.fields['sell_date'].help_text = 'when will you sell this investment? (optional)'
 
+'''
