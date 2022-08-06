@@ -17,9 +17,17 @@ from django.contrib import admin
 from django.urls import path, include, re_path
 
 urlpatterns = [
-    path('tarot/', include('tarot_app.urls')),
+    # internal management
     path('admin/', admin.site.urls),
+
+    # tarot webapp
+    path('tarot/', include(('tarot_app.urls', 'tarot_app'))),
+    path('tarot/', include(('accounts.urls', 'tarot_app'))),
     path('tarot/convert/', include('guest_user.urls')),
-    path('tarot/', include('accounts.urls')),
+
+    # code immersion webapp
+    path('code_immersion/', include(('code_immersion_app.urls', 'ci'))),
+
+    # google analytics
     re_path('djga/', include('google_analytics.urls')),
 ]

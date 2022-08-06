@@ -1,4 +1,4 @@
-{% extends "tarot_header.html" %}
+{% extends "ci_header.html" %}
 
 {% block content %}
 
@@ -8,12 +8,15 @@
 <body>
     <main class='wrapper'>
         <div class='aside-1'>
-            <h2>Plan a New Goal</h2>
+            <h2>Starting Income, Expenses, and Investment plan</h2>
         </div>
         <section class='main'>
+            <p>
+            Note: Tarot assumes you will use your income to build an emergency fund equal to "Amount kept in savings", then contribute to retirement, and then invest any remaining money. Please see the <a href='about'> about </a> page if you're confused by this. 
+            </p>
             <form method='POST'>
                 {% csrf_token %}
-                {{ goal_form|crispy }}
+                {{ workcashflow_form|crispy }}
                 <button type = 'submit' name = 'submit' value='submit'>Submit</button>
                 {% if can_delete %}
                     <button type = 'delete' name = 'delete' value = 'delete'>Delete</button>

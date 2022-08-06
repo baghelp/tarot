@@ -1,4 +1,4 @@
-{% extends "tarot_header.html" %}
+{% extends "ci_header.html" %}
 
 {% block content %}
 
@@ -8,16 +8,13 @@
 <body>
     <main class='wrapper'>
         <div class='aside-1'>
-            <h2>Plan a New Goal</h2>
+            <h2>Submit Goal</h2>
         </div>
         <section class='main'>
             <form method='POST'>
                 {% csrf_token %}
                 {{ goal_form|crispy }}
-                <button type = 'submit' name = 'submit' value='submit'>Submit</button>
-                {% if can_delete %}
-                    <button type = 'delete' name = 'delete' value = 'delete'>Delete</button>
-                {% endif %}
+                <button type = 'submit'>Submit</button>
             </form>
         </section>
     </main>

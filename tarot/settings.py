@@ -39,6 +39,7 @@ ALLOWED_HOSTS = [
 INSTALLED_APPS = [
     'tarot_app',
     'accounts',
+    'code_immersion_app',
     'django.contrib.admin',
     'django.contrib.humanize',
     'django.contrib.auth',

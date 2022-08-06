@@ -11,15 +11,15 @@ import plotly.graph_objs as go
 import numpy as np
 
 def index(request):
-    return render(request = request, template_name = 'tarot/index.html')
+    return render(request = request, template_name = 'code_immersion/index.html')
 
 def about(request):
-    return render(request = request, template_name = 'tarot/about.html')
+    return render(request = request, template_name = 'code_immersion/about.html')
 
 @allow_guest_user
 def home(request):
     if not request.user.workcashflow_set.exists():
-        return redirect(reverse('tarot_app:workcashflow'))
+        return redirect(reverse('workcashflow'))
 
     savings_plot = makeSavingsPlot(request, default_num_dates=150)
     plot_div = [savings_plot]
@@ -47,7 +47,7 @@ def home(request):
         "sorted_goals":sorted_goals,
     }
 
-    return render(request = request, template_name = 'tarot/home.html', context = context_to_pass)
+    return render(request = request, template_name = 'code_immersion/home.html', context = context_to_pass)
 
 @allow_guest_user
 def workcashflow(request):#, id=None):
@@ -66,14 +66,14 @@ def workcashflow(request):#, id=None):
     if can_delete and request.POST.get('delete'):
         instance.delete()
         # delete was successful, redirect
-        return redirect(reverse('tarot_app:home'))
+        return redirect(reverse('home'))
 
     elif request.POST and form.is_valid(): # only save if POST. Otherwise they want to _see_ something, not _submit_ something
         form.save()
 
         # save was successful, redirect
-        return redirect(reverse('tarot_app:home'))
-    return render(request = request, template_name = 'tarot/income_and_spending.html', context = {'workcashflow_form':form, 'can_delete':can_delete})
+        return redirect(reverse('home'))
+    return render(request = request, template_name = 'code_immersion/income_and_spending.html', context = {'workcashflow_form':form, 'can_delete':can_delete})
 
 @allow_guest_user
 def changeinincome(request, id=None):
@@ -99,13 +99,13 @@ def changeinincome(request, id=None):
     if can_delete and request.POST.get('delete'):
         instance.delete()
         # delete was successful, redirect
-        return redirect(reverse('tarot_app:home'))
+        return redirect(reverse('home'))
 
     if request.POST and form.is_valid():
         form.save()
-        return redirect(reverse('tarot_app:home'))
+        return redirect(reverse('home'))
 
-    return render(request = request, template_name = 'tarot/change_in_income.html', context = {'changeinincome_form':form, 'can_delete':can_delete})
+    return render(request = request, template_name = 'code_immersion/change_in_income.html', context = {'changeinincome_form':form, 'can_delete':can_delete})
 
 @allow_guest_user
 def changeinexpenses(request, id=None):
@@ -129,13 +129,13 @@ def changeinexpenses(request, id=None):
     form = ChangeInExpensesForm(request.POST or None, instance = instance)
     if can_delete and request.POST.get('delete'):
         instance.delete()
-        return redirect(reverse('tarot_app:home'))
+        return redirect(reverse('home'))
 
     if request.POST and form.is_valid():
         form.save()
-        return redirect(reverse('tarot_app:home'))
+        return redirect(reverse('home'))
 
-    return render(request = request, template_name = 'tarot/change_in_expenses.html', context = {'changeinexpenses_form':form, 'can_delete':can_delete})
+    return render(request = request, template_name = 'code_immersion/change_in_expenses.html', context = {'changeinexpenses_form':form, 'can_delete':can_delete})
 
 @allow_guest_user
 def onetimeinvestment(request, id=None):
@@ -152,13 +152,13 @@ def onetimeinvestment(request, id=None):
     if can_delete and request.POST.get('delete'):
         instance.delete()
         # delete was successful, redirect
-        return redirect(reverse('tarot_app:home'))
+        return redirect(reverse('home'))
 
     if request.POST and form.is_valid():
         form.save()
-        return redirect(reverse('tarot_app:home'))
+        return redirect(reverse('home'))
 
-    return render(request = request, template_name = 'tarot/one_time_investment.html', context = {'onetimeinvestment_form':form, 'can_delete':can_delete})
+    return render(request = request, template_name = 'code_immersion/one_time_investment.html', context = {'onetimeinvestment_form':form, 'can_delete':can_delete})
 
 @allow_guest_user
 def recurringinvestment(request, id=None):
@@ -175,13 +175,13 @@ def recurringinvestment(request, id=None):
     if can_delete and request.POST.get('delete'):
         instance.delete()
         # delete was successful, redirect
-        return redirect(reverse('tarot_app:home'))
+        return redirect(reverse('home'))
 
     if request.POST and form.is_valid():
         form.save()
-        return redirect(reverse('tarot_app:home'))
+        return redirect(reverse('home'))
 
-    return render(request = request, template_name = 'tarot/recurring_investment.html', context = {'recurringinvestment_form':form, 'can_delete':can_delete})
+    return render(request = request, template_name = 'code_immersion/recurring_investment.html', context = {'recurringinvestment_form':form, 'can_delete':can_delete})
 
 @allow_guest_user
 def goal(request, id=None):
@@ -198,13 +198,13 @@ def goal(request, id=None):
     if can_delete and request.POST.get('delete'):
         instance.delete()
         # delete was successful, redirect
-        return redirect(reverse('tarot_app:home'))
+        return redirect(reverse('home'))
 
     if request.POST and form.is_valid():
         form.save()
-        return redirect(reverse('tarot_app:home'))
+        return redirect(reverse('home'))
 
-    return render(request = request, template_name = 'tarot/goal.html', context = {'goal_form':form, 'can_delete':can_delete})
+    return render(request = request, template_name = 'code_immersion/goal.html', context = {'goal_form':form, 'can_delete':can_delete})
 
 def calculateDateArray(start_date, default_num_dates, goals):
 
@@ -393,7 +393,7 @@ def new_goal(request):
         new_goal = form.save(commit = False)
         new_goal.user = request.user
         new_goal.save()
-        return redirect(reverse('tarot_app:home'))
+        return redirect(reverse('home'))
         # do something I guess
     form = GoalForm()
-    return render(request = request, template_name = 'tarot/new_goal.html', context = {'goal_form':form})
+    return render(request = request, template_name = 'code_immersion/new_goal.html', context = {'goal_form':form})
