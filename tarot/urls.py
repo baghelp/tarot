@@ -21,5 +21,4 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('tarot/convert/', include('guest_user.urls')),
     path('tarot/', include('accounts.urls')),
-    re_path('djga/', include('google_analytics.urls')),
 ]
