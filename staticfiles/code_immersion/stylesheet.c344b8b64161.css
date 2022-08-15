@@ -4,7 +4,6 @@
     --color-accent:#80000015;
     --color-link:#058ed9;  /* light blue */
     --width-content:initial;
-    --line-height: 1.5;
 }
 
 html, body{
@@ -12,17 +11,10 @@ html, body{
     padding:0;
     width:100%;
     height:100%;
-    line-height: var(--line-height);
 }
-
 body{
     background-color: #fbfbfb;
     background-repeat: no-repeat;
-}
-
-
-main{
-
 }
 
 h2{
@@ -35,12 +27,6 @@ ul{
     text-align: left;
 }
 
-a{
-    color: var(--color-link);
-    display: inline-block;
-    font-weight: bold;
-}
-
 .CodeMirror {
     border: 1px solid #eee;
     height: 100%;
@@ -49,60 +35,69 @@ a{
 
 .page-wrapper {
     display: flex;  
-    flex-flow: column;
-    margin: auto;
+    flex-flow: row wrap;
+    flex-direction: column;
+    text-align: center; 
+    justify-content: center; 
+    color: #222222;
+    padding: 0rem 0rem 0rem 0rem;
     height: 100%;
     width: 100%;
+    margin: auto;
 }
 
+.console-wrapper {
+    display: flex;  
+    flex-direction: row;
+    justify-content: center; 
+    color: #222222;
+    padding: 0rem 0rem 3rem 0rem;
+    margin: 0 10% 0 10%;
+    flex: 1 1 auto;
+}
+
+.console-wrapper > * {
+    flex: 4 1 auto;
+    text-align: left;
+}
 
 .header {
     width:100%;
-    height:min-content;
     text-align: right; 
     background-color: #e5e5e5;
     color: #222222;
-    flex: 0 1 auto;
+}
+
+.footer {
+    background-color:#400000;
+    max-width:none;
+    padding: 3rem 0rem;
+    height:100%;
+    flex-grow:1;
+}
+
+.main {
+    width:100%;
+    max-width:none;
+    padding:0rem 2rem;
+    flex: 1 1 auto;
 }
 
 .page-title {
     width:100%;
-    height:min-content;
     padding: 1rem 0rem 0rem 0rem;
-    flex: 0 1 auto;
+    flex: initial;
 }
 
-
-.console-wrapper {
-    display: grid;
-    grid-auto-flow: column;
-    justify-content: center; 
-    grid-auto-columns: 3fr;
-    padding: 0rem 0rem 3rem 0rem;
-    margin: 0 10% 0 10%;
-    flex: 1 1 auto;
-    height: auto;
+.aside-2 {
+    width:100%;
+    padding:0rem 0rem;
 }
 
 .column {
-    display: grid;
-    grid-auto-columns: 1fr;
-    text-align: left;
     border: 1px dashed blue;
     box-sizing: border-box;
-    width: initial;
- /*   width: 50%;
-    height: 100%;
-    */
-}
-
-.CodeMirror{
-    box-sizing: border-box;
-    width: initial;
-}
-
-.div{
-    width: 100%;
+    flex: 3 1 auto;
 }
 
 @media all/* and (min-width: 800px)*/ {

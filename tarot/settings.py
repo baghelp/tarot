@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+#from djangocodemirror.settings import *
+#from djangocodemirror.helper import codemirror_settings_update
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,9 +39,19 @@ ALLOWED_HOSTS = [
 # Application definition
 
 INSTALLED_APPS = [
+    # tarot
     'tarot_app',
+    'crispy_forms',
+    'guest_user',
+    'google_analytics',
+
+    # account management
     'accounts',
+
+    # code immersion
     'code_immersion_app',
+
+    # default django stuff
     'django.contrib.admin',
     'django.contrib.humanize',
     'django.contrib.auth',
@@ -47,9 +59,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'crispy_forms',
-    'guest_user',
-    'google_analytics',
 ]
 
 MIDDLEWARE = [
@@ -178,3 +187,27 @@ GUEST_USER_CONVERT_REDIRECT_URL = 'home'
 GOOGLE_ANALYTICS = {
     'google_analytics_id': 'UA-228709231-1',
 }
+
+
+# Code mirror configurations
+CODEMIRROR_PATH = STATIC_URL + '/' + 'codemirror'
+CODEMIRROR_MODE = 'clike/text/x-csrc'
+CODEMIRROR_THEME = 'abcdef'
+'''
+CODEMIRROR_MODES.update({
+    'restructuredtext': {
+        'modes': ['clike/text/x-csrc', 'clike/x-shader/x-fragment'],
+        'matchBrackets': True,
+        'addons': [
+        'CodeMirror/addon/runmode/colorize.js',
+            'CodeMirror/addon/runmode/runmode-standalone.js',
+        ],
+        'extra_css': [],
+        'themes': [ 'abcdef',
+        ],
+    },
+})
+
+CODEMIRROR_THEMES['abcdef'] = 'abcdef.css'
+
+'''

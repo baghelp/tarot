@@ -1,161 +1,24 @@
-{% extends 'ci_header.html' %}
+{% extends 'ci_html_template.html' %}
 
 {% block content %}
 {% load humanize %}
+{% load static %}
 
-<body>
-    <main class='wrapper'>
-        <div class='aside-1'>
-            <h2>Projected Savings</h2>
-        </div>
+    <div class='page-title'>
+        <h2>Code Immersion Home</h2>
+    </div>
 
-        <!--<section class='main'></section>-->
+    <div class='console-wrapper'>
+        <section class='column' id="first_console">
 
-        <!--<div class='aside-2'>-->
-        <div class='main'>
-
-            <script src ="https://cdn.plot.ly/plotly-latest.min.js"></script>
-            {% autoescape off %}
-            {% for plot in plot_div %}
-                {{ plot }}
-            {% endfor %}
-            {% endautoescape %}
-
-            <div class='aside-2'>
-                    <h2> Projection based on the following assumptions:</h2> 
-            </div>
-            <div align = 'left'>
-                {% for cashflow in work_cashflow %}
-                    Starting on {{ cashflow.start_date }}, you'll have:
-                    <ul>
-                        <li> starting savings of <b>${{ cashflow.starting_savings|intcomma }}</b>
-                        <li> starting retirement of <b>${{ cashflow.starting_retirement|intcomma }} </b>
-                        <li> yearly income of <b>${{ cashflow.yearly_income|intcomma }}</b>
-                        <li> yearly expenses of <b>${{ cashflow.yearly_expenses|intcomma }}</b>
-                    </ul>
-                    your investment plans are:
-                    <ul>
-                        <li> keep your savings at <b>${{ cashflow.amount_kept_in_savings|intcomma }}</b>
-                        <li> add <b>${{ cashflow.added_yearly_to_retirement|intcomma }}</b> to retirement each year if possible, and you expect this to grow at <b>{{ cashflow.retirement_yearly_growth_rate }}%</b> each year
-                        <li> invest whatever remains. You expect this to grow at <b>{{ cashflow.other_investment_yearly_growth_rate }}%</b> each year
-                    </ul>
-                <a href = 'income_and_expenses'>
-                    Modify or delete
-                </a>
-                 your starting savings, income, expenses, or investment plan
-                {% endfor %}
-
-                <br>
-                <br>
-
-                Changes in Income <br>
-                {% if not sorted_changes_in_income %}
-                    <ul>
-                    <li> [no changes in income currently planned]
-                    </ul>
-                {% else %}
-                    <ol>
-                    {% for income_change in sorted_changes_in_income %}
-                        <li> "<b>{{ income_change.name }}</b>" - starting on <b>{{ income_change.start_date }}</b> your new yearly income will be <b>${{ income_change.new_yearly_income|intcomma }}</b>.
-                        
-                        <a href = 'change_in_income/{{ income_change.pk }}'>
-                            Modify or delete
-                        </a>
-
-                    {% endfor %}
-                    </ol>
-                {% endif %}
-                <a href = 'change_in_income'>
-                    plan another change in income
-                </a>
-
-                <br>
-                <br>
-
-                Changes in Expenses <br>
-                {% if not sorted_changes_in_expenses %}
-                    <ul>
-                    <li> [no changes in expenses currently planned]
-                    </ul>
-                {% else %}
-                    <ol>
-                    {% for expense_change in sorted_changes_in_expenses %}
-                        <li> "<b>{{ expense_change.name }}</b>" - starting on <b>{{ expense_change.start_date }}</b> has new yearly expense of <b>${{ expense_change.new_yearly_expenses|intcomma }}</b>.
-                        
-                        <a href = 'change_in_expenses/{{ expense_change.pk }}'>
-                            Modify or delete
-                        </a>
-
-                    {% endfor %}
-                    </ol>
-                {% endif %}
-                <a href = 'change_in_expenses'>
-                    plan another change in expenses
-                </a>
-
-                <br>
-                <br>
+        </section>
 
 
-<!--
-                One Time Investments <br>
-                {% if not sorted_one_time_investments %}
-                    <ul>
-                    <li> [no one-time investments currently planned]
-                    </ul>
-                {% else %}
-                    <ol>
-                    {% for investment in sorted_one_time_investments %}
-                        <li> "{{ investment.name }}" - on {{ investment.start_date }} you'll invest ${{ investment.amount }}, which will grow {{ investment.yearly_growth }}% each year,
-                        {% if investment.sell_date %}
-                            until {{ investment.sell_date }}.
-                        {% else %}
-                             indefinitely.
-                        {% endif %}
-                        
-                        <a href = 'one_time_investment/{{ investment.pk }}'>
-                            Modify or delete
-                        </a>
-
-                    {% endfor %}
-                    </ol>
-                {% endif %}
-                <a href = 'one_time_investment'>
-                    plan another one-time investment
-                </a>
-
-                <br>
-                <br>
-                -->
-
-                Goals <br>
-                {% if not sorted_goals %}
-                    <ul>
-                    <li> [no goals currently planned]
-                    </ul>
-                {% else %}
-                    <ol>
-                    {% for goal in sorted_goals %}
-                        <li> "<b>{{ goal.name }}</b>": 
-                        {% if investment.goal_date %} 
-                            on <b>{{ investment.goal_date }}</b> 
-                        {% endif %}
-                        you want to save <b>${{ goal.goal_amount|intcomma }}</b> in <b>{{ goal.dollar_value_date.year }}-dollars</b>.
-                        <a href = 'goal/{{ goal.pk }}'>
-                            Modify or delete
-                        </a>
-
-                    {% endfor %}
-                    </ol>
-                {% endif %}
-                <a href = 'goal'>
-                    plan another goal
-                </a>
-
-            </div>
-        </div>
-    </main>
-</body>
+        <section class='column' id="second_console">
 
 
+        </section>
+    </div>
+
+<script type='text/javascript' src="{% static 'code_immersion/codeMirrorIntegration.js' %}"></script>
 {% endblock content %}

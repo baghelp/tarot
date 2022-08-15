@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect, reverse, get_object_or_404
-from .forms import WorkCashflowForm, ChangeInIncomeForm, ChangeInExpensesForm, GoalForm
 from django.contrib import messages
 from django.http import HttpResponse
 from .models import WorkCashflow, ChangeInIncome, ChangeInExpenses, Goal
@@ -18,36 +17,12 @@ def about(request):
 
 @allow_guest_user
 def home(request):
-    if not request.user.workcashflow_set.exists():
-        return redirect(reverse('workcashflow'))
-
-    savings_plot = makeSavingsPlot(request, default_num_dates=150)
-    plot_div = [savings_plot]
-
-    work_cashflow = request.user.workcashflow_set.all()
-    changes_in_income = request.user.changeinincome_set.all()
-    changes_in_expenses = request.user.changeinexpenses_set.all()
-    #one_time_investments = request.user.onetimeinvestment_set.all()
-    #recurring_investments = request.user.recurringinvestment_set.all()
-    goals = request.user.goal_set.all()
-
-    sorted_changes_in_income = sorted(changes_in_income, key = lambda x:x.start_date)
-    sorted_changes_in_expenses = sorted(changes_in_expenses, key = lambda x:x.start_date)
-    #sorted_one_time_investments = sorted(one_time_investments, key = lambda x:x.start_date)
-    #sorted_recurring_investments = sorted(recurring_investments, key = lambda x:x.start_date)
-    sorted_goals = goals #sorted(goals, key = lambda x:x.goal_date)# TODO: not sorted at all
 
     context_to_pass = {
-        "plot_div":plot_div,
-        "work_cashflow":work_cashflow,
-        "sorted_changes_in_income":sorted_changes_in_income,
-        "sorted_changes_in_expenses":sorted_changes_in_expenses,
-        #"sorted_one_time_investments":sorted_one_time_investments,
-        #"sorted_recurring_investments":sorted_recurring_investments,
-        "sorted_goals":sorted_goals,
+        "plot_div":'hi',
     }
 
-    return render(request = request, template_name = 'code_immersion/home.html', context = context_to_pass)
+    return render(request = request, template_name = 'code_immersion/home.html', context = {})
 
 @allow_guest_user
 def workcashflow(request):#, id=None):
