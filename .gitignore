@@ -12,3 +12,6 @@
 
 # pycache
 **/__pycache__
+
+# Node modules
+code_immersion_app/static/code_immersion/node_modules
