@@ -183,12 +183,6 @@ LOGOUT_REDIRECT_URL = 'index'
 # Settings for guest user registration
 GUEST_USER_CONVERT_REDIRECT_URL = 'home'
 
-# Google Analytics
-GOOGLE_ANALYTICS = {
-    'google_analytics_id': 'UA-228709231-1',
-}
-
-
 # Code mirror configurations
 CODEMIRROR_PATH = STATIC_URL + '/' + 'codemirror'
 CODEMIRROR_MODE = 'clike/text/x-csrc'

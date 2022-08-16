@@ -27,7 +27,4 @@ urlpatterns = [
 
     # code immersion webapp
     path('code_immersion/', include(('code_immersion_app.urls', 'ci'))),
-
-    # google analytics
-    re_path('djga/', include('google_analytics.urls')),
 ]
