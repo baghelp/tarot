@@ -43,7 +43,6 @@ INSTALLED_APPS = [
     'tarot_app',
     'crispy_forms',
     'guest_user',
-    'google_analytics',
 
     # account management
     'accounts',
