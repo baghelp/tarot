@@ -7,7 +7,7 @@ const console1 = CodeMirror(document.querySelector('#first_console'), {
     lineNumbers: true,
     tabSize: 2,
     mode: 'javascript',
-    value: 'This is a pretty long sentence. others are longer but this is long.',
+    value: 'This is a pretty long sentence.\n others are longer but this is long.',
     readOnly: true,
 });
 
@@ -17,33 +17,57 @@ const console2 = CodeMirror(document.querySelector('#second_console'), {
     theme: 'ayu-mirage',
     mode: 'javascript',
     value: 'coconsole.log("Helconsole.log("Helconsole.lnsole.log("Hello, World");',
+
 });
 
-//console2.on("change", function(cm, 
+
+// console2.on("change", function(cm, 
 const one = console1.getValue();
 
 console2.on("changes", function(changes) {
-    console.log(changes);
-    console.log(console1);
-    console.log(console2);
     // code to color based on output
     var other = changes.getValue();
 
-    //var diff = Diff.diffWords(one, other);
-    var diff = Diff.diffChars(one, other);
+    var diff = Diff.diffWords(one, other);
+    //var diff = Diff.diffChars(one, other);
 
-    /* 
-    diff.forEach((part) => {
-        //green for additions, red for deletions, grey for common parts
-        const color = part.added ? 'green':
-            part.removed ? 'red' : 'grey';
-        //console.log(part.value[color]);
+    var styling = [];
+    var line_index = 0;
+    var char_index = 0;
+
+    diff.forEach((change) => {
+        console.log(change.value);
+        // read through reproductions and removals, to get line numbers
+        if( change.added ){
+            return;
+        }
+        
+        for(var i=0; i<change.value.length; i++) {
+            ch = change.value[i];
+            if( ch == '\n' ) {
+                line_index++;
+                char_index = 0;
+            } else{
+                char_index++;
+            };
+        };
+
+
+        if( change.removed ){
+            styling.push( {place: {line:line_index, ch:char_index}, style:{css:"color: black"}} );
+        } else {
+            styling.push( {place: {line:line_index, ch:char_index}, style:{css:"color: mediumblue"}} );
+        };
+ 
     });
-    */
-    
 
-    //console1.markText({line:0,ch:1}, {line:2,ch:5}, {css:"color: green"});
+    last_pos = {line:0,ch:0};
+    for (var i=0; i< (styling.length); i++) {
+        console1.markText(last_pos, styling[i].place, styling[i].style);
+        last_pos = styling[i].place;
+    };
 
     console.log(diff);
+    console.log(styling);
 });
 
