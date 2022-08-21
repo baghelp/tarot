@@ -7,7 +7,7 @@ const console1 = CodeMirror(document.querySelector('#first_console'), {
     lineNumbers: true,
     tabSize: 2,
     mode: 'javascript',
-    value: 'This is a pretty long sentence.\n others are longer but this is long.',
+    value: 'Twas brillig, and the slithy toves\nDid gyre and gimble in the wabe:\nAll mimsy were the borogoves,\nAnd the mome raths outgrabe. \n\n“Beware the Jabberwock, my son!\nThe jaws that bite, the claws that catch!\nBeware the Jubjub bird, and shun\nThe frumious Bandersnatch!”',
     readOnly: true,
 });
 
@@ -28,15 +28,14 @@ console2.on("changes", function(changes) {
     // code to color based on output
     var other = changes.getValue();
 
-    var diff = Diff.diffWords(one, other);
-    //var diff = Diff.diffChars(one, other);
+    var diff = Diff.diffWordsWithSpace(one, other);
 
     var styling = [];
     var line_index = 0;
     var char_index = 0;
 
     diff.forEach((change) => {
-        console.log(change.value);
+        //console.log(change.value);
         // read through reproductions and removals, to get line numbers
         if( change.added ){
             return;
@@ -55,8 +54,10 @@ console2.on("changes", function(changes) {
 
         if( change.removed ){
             styling.push( {place: {line:line_index, ch:char_index}, style:{css:"color: black"}} );
+            console.log({state:'removed', value: change.value})
         } else {
             styling.push( {place: {line:line_index, ch:char_index}, style:{css:"color: mediumblue"}} );
+            console.log({state:'matched', value: change.value})
         };
  
     });
@@ -68,6 +69,6 @@ console2.on("changes", function(changes) {
     };
 
     console.log(diff);
-    console.log(styling);
+    //console.log(styling);
 });
 
