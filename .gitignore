@@ -15,3 +15,11 @@
 
 # Node modules
 code_immersion_app/static/code_immersion/node_modules
+
+
+# Virtual environment folders
+code_immersion_app/util/bin
+code_immersion_app/util/include
+code_immersion_app/util/lib
+code_immersion_app/util/lib64
+code_immersion_app/util/pyvenv.cfg

@@ -1,4 +1,6 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
+
+
 // includes
 require('colors');
 const Diff = require('diff');
@@ -22,14 +24,15 @@ const console2 = CodeMirror(document.querySelector('#second_console'), {
 });
 
 
-// console2.on("change", function(cm, 
-const one = console1.getValue();
+let first_console_text = console1.getValue();
 
 console2.on("changes", function(changes) {
+    compare_consoles(first_console_text, changes);
+    /*
     // code to color based on output
     var other = changes.getValue();
 
-    var diff = Diff.diffWordsWithSpace(one, other);
+    var diff = Diff.diffWordsWithSpace(first_console_text, other);
 
     var styling = [];
     var line_index = 0;
@@ -70,7 +73,88 @@ console2.on("changes", function(changes) {
     };
 
     console.log(diff);
-    //console.log(styling);
+    */
+});
+
+function compare_consoles(console1_text, console2_text) {
+    var text2 = console2.getValue();
+
+    var diff = Diff.diffWordsWithSpace(console1_text, text2);
+
+    var styling = [];
+    var line_index = 0;
+    var char_index = 0;
+
+    diff.forEach((change) => {
+        //console.log(change.value);
+        // read through reproductions and removals, to get line numbers
+        if( change.added ){
+            return;
+        }
+        
+        for(var i=0; i<change.value.length; i++) {
+            ch = change.value[i];
+            if( ch == '\n' ) {
+                line_index++;
+                char_index = 0;
+            } else{
+                char_index++;
+            };
+        };
+
+
+        if( change.removed ){
+            styling.push( {place: {line:line_index, ch:char_index}, style:{css:"color: black"}} );
+            console.log({state:'removed', value: change.value})
+        } else {
+            styling.push( {place: {line:line_index, ch:char_index}, style:{css:"color: mediumblue"}} );
+            console.log({state:'matched', value: change.value})
+        };
+ 
+    });
+
+    last_pos = {line:0,ch:0};
+    for (var i=0; i< (styling.length); i++) {
+        console1.markText(last_pos, styling[i].place, styling[i].style);
+        last_pos = styling[i].place;
+    };
+
+    console.log(diff);
+}
+
+
+function trigger_selection(element) {
+    console.log('hi');
+    let text = element.innerText;
+    difficulty = text.split(':')[0];
+    example_name = text.split(': ')[1];
+    document.getElementById('lesson').innerText = example_name;
+    $.getJSON('../static/code_immersion/lessons.json', function(data) {
+        text_selection = data['levels'][difficulty][example_name];
+        console1.setValue(text_selection);
+        first_console_text = text_selection;
+    });
+}
+
+
+$(document).ready(function(){
+    $.getJSON('../static/code_immersion/lessons.json', function(data) {
+        for( var root in data){
+            for( var level in data[root]){
+                for( var filename in data[root][level]){
+                    $('#ddm').append('<li class="dropdown-item" id="option"><a href="#">' + level + ': ' + filename + '</a></li>');
+                }
+            }
+        }
+        let links = document.getElementsByClassName('dropdown-item');
+        for (let i=0; i<links.length; i++) {
+            links[i].addEventListener("click",
+                function() {
+                    trigger_selection(links[i]);
+                }
+            );
+        };
+    });
 });
 
 

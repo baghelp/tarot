@@ -5,14 +5,23 @@
 {% load static %}
 
     <div class='page-title'>
-        <h2>Code Immersion Home</h2>
+        <h2>Code Immersion</h2>
+        <div class="dropdown">
+            <a class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" href='#' id="lesson">
+                Lesson
+            </a>
+            <ul class='dropdown-menu' id="ddm">
+
+            </ul>
+        </div>
     </div>
 
+
     <div class='console-wrapper'>
+
         <section class='column' id="first_console">
 
         </section>
-
 
         <section class='column' id="second_console">
 
@@ -21,5 +30,6 @@
     </div>
 
 <!-- <script type='text/javascript' src="{% static 'code_immersion/codeMirrorIntegration.js' %}"></script> -->
+<script type='text/javascript' src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script type='text/javascript' src="{% static 'code_immersion/bundle.js' %}"></script>
 {% endblock content %}
