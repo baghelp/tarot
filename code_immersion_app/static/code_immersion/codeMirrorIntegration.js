@@ -18,7 +18,7 @@ const console2 = CodeMirror(document.querySelector('#second_console'), {
     tabSize: 2,
     theme: 'ayu-mirage',
     mode: 'javascript',
-    value: 'coconsole.log("Helconsole.log("Helconsole.lnsole.log("Hello, World");',
+    value: 'Type your code here',
 
 });
 

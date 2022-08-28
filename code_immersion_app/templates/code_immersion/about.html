@@ -1,60 +1,26 @@
-{% extends 'ci_header.html' %}
+{% extends 'ci_html_template.html' %}
 
 {% block content %}
 
-<body>
-    <main class='wrapper'>
-        <div class='aside-1'>
-            <h2>About Tarot</h2>
+        <div class='page-title'>
+            <h2>About Code Immersion</h2>
         </div>
 
-        <section class='main' style='justify-content:start; text-align:left;'>
-            <p> It should be simple to see what your financial future looks like. Tarot is a tool that helps you estimate your future finances. I hope Tarot helps you plan for your future, especially if you are intimidated by finance.
-            Tarot imposes some assumptions on how you'll save your money. It assumes that your income is used:
-                <ol>
-                    <li> First, to cover your expenses
-                    <li> Second, to save up an "emergency" fund in your savings account
-                    <li> Third, to contribute to your retirement
-                    <li> Finally, the rest is invested in some other way
-                </ol>
-                I think most people's plans are pretty similar to this, and hopefully this pattern is simple enough that it doesn't scare away newcomers. I like that it specifically introduces investing as part of the plan, since I have struggled for years to convince family members that investing money can be a good decision.
-
-                <hr>
-
-                <h2 style='width:100%;'>Possible Features</h2>
-                These are some features that I am considering including:
+        <div class='text-wrapper' style='justify-content:start; text-align:left;'>
+            <p> I wanted to have an interface that would keep track of my progress while I rewrite an existing codebase. It's possible something already existed, but this seemed like a fun project to build myself. Right now, it just includes some code examples for C. I'm still working on integrating:
                 <ul>
-                    <li> include suggestions / tips for common investments (eg, "over the long term, the SP500 has historically returned roughly 8 percent yearly")
-                    <li> add some high-level advice for how to plan for retirement (eg, 'plan to live off of 4% of your investments, here's a link', 'the US tries to keep inflation of the dollar at roughly 3% every year', etc)
-                    <li> include withdrawals during retirement
-                    <li> include house purchase as its own invesment
-                    <li> include vehicle purchase as its own invesment
-                    <li> users can sign up for email reminders every X months to revisit their progress towards their goals
-                    <li> export a summary to csv that users can download and use elsewhere
-                    <li> account for pay period (as opposed to spreading yearly income across individual days)
-                    <li> explicitly handle taxes, instead of accounting for it in income
-                    <li> include variance in the growth of investments
-                    <li> if people like Tarot, find a way to charge for something
-                    <li> probably some others I've forgotten!
+                    <li> saving progress
+                    <li> importing arbitrary codebases
                 </ul>
-            I don't know when (or if) I'll get to these. If you are very passionate about some feature, or have feedback of any kind, please let me know by emailing mbagherpour [the number five] at gmail. I especially want to hear your suggestions for how to simplify planning, saving, and investing for newcomers.
-
-                <hr>
-
-                <h2 style='width:100%;'>Ads, Privacy, etc</h2>
-                Right now, this is mostly just a fun project for me, so I can't promise anything about the future of Tarot. However, this is how I'm thinking about it:
+          
+            In this project, I used the following tools:
                 <ul>
-                    <li> Primarily, I want to make it less scary for people to plan for their future
-                    <li> I prefer something simple and "good enough" over something complex and all-encompassing
-                    <li> I don't like ads, and don't want to include them
-                    <li> I'm not going to sell your data to anyone. I don't even know how I would do that.
-                    <li> You should be able to easily delete <b>all</b> information associated with your account: <a href ='delete_account'><u> delete your account </u></a>
-                    <li> I would love to make money off of this, but don't want to monetize the whole thing -- some part will always remain free
+                    <li> CodeMirror, which uses the MIT license -- see <a href='https://github.com/codemirror/dev/blob/master/LICENSE'>here</a>
+                    <li> jsdiff, which uses the BSD license -- see <a href='https://github.com/kpdecker/jsdiff/blob/master/LICENSE'>here</a>
+                    <li> django, which uses the BSD license -- see <a href='https://github.com/django/djangoproject.com/blob/main/LICENSE'>here</a>
                 </ul>
             </p>
-        </section>
-    </main>
-</body>
+        </div>
 
 
 {% endblock content %}
