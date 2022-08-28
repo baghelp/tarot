@@ -1,7 +1,6 @@
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.contrib import messages
 from django.http import HttpResponse
-from .models import WorkCashflow, ChangeInIncome, ChangeInExpenses, Goal
 from plotly.offline import plot
 from datetime import timedelta
 from guest_user.decorators import allow_guest_user
