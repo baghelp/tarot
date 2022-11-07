@@ -177,7 +177,7 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 # Settings for the auth backend
 LOGIN_REDIRECT_URL = '../home'
 LOGIN_URL = 'login'
-LOGOUT_REDIRECT_URL = 'index'
+LOGOUT_REDIRECT_URL = '/tarot'
 
 # Settings for guest user registration
 GUEST_USER_CONVERT_REDIRECT_URL = 'home'
