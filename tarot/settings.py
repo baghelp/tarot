@@ -175,7 +175,7 @@ STATIC_URL = '/static/'
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 # Settings for the auth backend
-LOGIN_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL = '../home'
 LOGIN_URL = 'login'
 LOGOUT_REDIRECT_URL = 'index'
 
