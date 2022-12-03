@@ -3,6 +3,12 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from datetime import date
 from django.utils.timezone import now
+from django.utils.translation import gettext_lazy as _
+
+class MonetaryCategories(models.TextChoices):
+    INVESTMENTS = 'invested value', _('Investments')
+    RETIREMENT = 'retirement value', _('Retirement')
+    NET_WORTH = 'net worth', _('Net Worth')
 
 class WorkCashflow(models.Model):
     starting_savings = models.IntegerField(default=0)
@@ -50,28 +56,13 @@ class Goal(models.Model):
     def __str__(self):
         return self.name
 
-'''
-class OneTimeInvestment(models.Model):
+class Datapoint(models.Model):
     name = models.CharField(max_length=200)
-    amount = models.IntegerField()
-    yearly_growth = models.DecimalField(decimal_places = 2, max_digits = 6)
-    start_date = models.DateField(default=now())
-    sell_date = models.DateField(blank=True, null=True)
+    monetary_category = models.CharField(max_length=200, choices = MonetaryCategories.choices, default = MonetaryCategories.INVESTMENTS)
+    observed_amount = models.IntegerField()
+    observed_date = models.DateField(default=now())
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
 
-class RecurringInvestment(models.Model):
-    name = models.CharField(max_length=200)
-    start_date = models.DateField(default=now())
-    amount = models.IntegerField()
-    investment_frequency = models.IntegerField() #TODO: times per year
-    yearly_growth = models.DecimalField(decimal_places = 2, max_digits = 6)
-    stop_date = models.DateField(blank=True, null=True)
-    sell_date = models.DateField(blank=True, null=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.name
-'''

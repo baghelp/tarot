@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.forms import widgets
-from .models import WorkCashflow, ChangeInIncome, ChangeInExpenses, Goal
+from .models import WorkCashflow, ChangeInIncome, ChangeInExpenses, Goal, Datapoint
 import datetime
 
 class WorkCashflowForm(forms.ModelForm):
@@ -72,41 +72,18 @@ class GoalForm(forms.ModelForm):
         self.fields['dollar_value_date'].help_text = 'eg, 1970-dollars, 2022-dollars, etc'
         self.fields['goal_date'].help_text = 'when you\'d like to meet your goal'
 
-'''
-class OneTimeInvestmentForm(forms.ModelForm):
+
+
+class RecordDatapointForm(forms.ModelForm):
     
     class Meta:
-        model = OneTimeInvestment
+        model = Datapoint
         fields = "__all__"
         exclude = ('user',)
         widgets = {
-            'start_date': widgets.DateInput(attrs={'type': 'date'})
+            'observation_date': widgets.DateInput(attrs={'type': 'date'})
         }
 
     def __init__(self, *args, **kwargs):
-        super(OneTimeInvestmentForm, self).__init__(*args, **kwargs)
+        super(RecordDatapointForm, self).__init__(*args, **kwargs)
 
-        self.fields['amount'].help_text = 'how much will you invest?'
-        self.fields['yearly_growth'].help_text = 'eg, enter \'3\' for 3% growth each year'
-        self.fields['sell_date'].help_text = 'when will you sell this investment? (optional)'
-
-class RecurringInvestmentForm(forms.ModelForm):
-    
-    class Meta:
-        model = RecurringInvestment
-        fields = "__all__"
-        exclude = ('user',)
-        widgets = {
-            'start_date': widgets.DateInput(attrs={'type': 'date'})
-        }
-
-    def __init__(self, *args, **kwargs):
-        super(RecurringInvestmentForm, self).__init__(*args, **kwargs)
-
-        self.fields['amount'].help_text = 'how much will you invest each time?'
-        self.fields['investment_frequency'].help_text = 'how many times per year will you invest?'
-        self.fields['yearly_growth'].help_text = 'eg, enter \'3\' for 3% growth each year'
-        self.fields['stop_date'].help_text = 'when will you stop adding money? (optional)'
-        self.fields['sell_date'].help_text = 'when will you sell this investment? (optional)'
-
-'''

@@ -6,7 +6,7 @@
 <body>
     <main class='wrapper'>
         <div class='aside-1'>
-            <h2>Projected Savings</h2>
+            <h2>Savings</h2>
         </div>
 
         <!--<section class='main'></section>-->
@@ -97,36 +97,29 @@
                 <br>
 
 
-<!--
-                One Time Investments <br>
-                {% if not sorted_one_time_investments %}
+                Record Observed Performance<br>
+                {% if not sorted_datapoints %}
                     <ul>
-                    <li> [no one-time investments currently planned]
+                    <li> [no observations recorded]
                     </ul>
                 {% else %}
                     <ol>
-                    {% for investment in sorted_one_time_investments %}
-                        <li> "{{ investment.name }}" - on {{ investment.start_date }} you'll invest ${{ investment.amount }}, which will grow {{ investment.yearly_growth }}% each year,
-                        {% if investment.sell_date %}
-                            until {{ investment.sell_date }}.
-                        {% else %}
-                             indefinitely.
-                        {% endif %}
+                    {% for datapoint in sorted_datapoints %}
+                        <li> "<b>{{ datapoint.name }}</b>" - on <b>{{ datapoint.observed_date }}</b> your <b>{{ datapoint.monetary_category }} </b> was <b>${{ datapoint.observed_amount|intcomma }}</b>.
                         
-                        <a href = 'one_time_investment/{{ investment.pk }}'>
+                        <a href = 'record_observation/{{ datapoint.pk }}'>
                             Modify or delete
                         </a>
 
                     {% endfor %}
                     </ol>
                 {% endif %}
-                <a href = 'one_time_investment'>
-                    plan another one-time investment
+                <a href = 'record_observation'>
+                    record another observation
                 </a>
 
                 <br>
                 <br>
-                -->
 
                 Goals <br>
                 {% if not sorted_goals %}

@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, reverse, get_object_or_404
-from .forms import WorkCashflowForm, ChangeInIncomeForm, ChangeInExpensesForm, GoalForm
+from .forms import WorkCashflowForm, ChangeInIncomeForm, ChangeInExpensesForm, GoalForm, RecordDatapointForm
 from django.contrib import messages
 from django.http import HttpResponse
-from .models import WorkCashflow, ChangeInIncome, ChangeInExpenses, Goal
+from .models import WorkCashflow, ChangeInIncome, ChangeInExpenses, Goal, Datapoint
 from plotly.offline import plot
 from datetime import timedelta
 from guest_user.decorators import allow_guest_user
@@ -27,14 +27,12 @@ def home(request):
     work_cashflow = request.user.workcashflow_set.all()
     changes_in_income = request.user.changeinincome_set.all()
     changes_in_expenses = request.user.changeinexpenses_set.all()
-    #one_time_investments = request.user.onetimeinvestment_set.all()
-    #recurring_investments = request.user.recurringinvestment_set.all()
+    recorded_datapoints = request.user.datapoint_set.all()
     goals = request.user.goal_set.all()
 
     sorted_changes_in_income = sorted(changes_in_income, key = lambda x:x.start_date)
     sorted_changes_in_expenses = sorted(changes_in_expenses, key = lambda x:x.start_date)
-    #sorted_one_time_investments = sorted(one_time_investments, key = lambda x:x.start_date)
-    #sorted_recurring_investments = sorted(recurring_investments, key = lambda x:x.start_date)
+    sorted_datapoints = sorted(recorded_datapoints, key = lambda x:x.observed_date)
     sorted_goals = goals #sorted(goals, key = lambda x:x.goal_date)# TODO: not sorted at all
 
     context_to_pass = {
@@ -42,8 +40,7 @@ def home(request):
         "work_cashflow":work_cashflow,
         "sorted_changes_in_income":sorted_changes_in_income,
         "sorted_changes_in_expenses":sorted_changes_in_expenses,
-        #"sorted_one_time_investments":sorted_one_time_investments,
-        #"sorted_recurring_investments":sorted_recurring_investments,
+        "sorted_datapoints":sorted_datapoints,
         "sorted_goals":sorted_goals,
     }
 
@@ -138,6 +135,35 @@ def changeinexpenses(request, id=None):
     return render(request = request, template_name = 'tarot/change_in_expenses.html', context = {'changeinexpenses_form':form, 'can_delete':can_delete})
 
 @allow_guest_user
+def recordobservation(request, id=None):
+    if id:  #user is accessing an existing datapoint
+        instance = get_object_or_404( Datapoint, pk=id)
+        if instance.user != request.user:
+            return HttpResponseForbidden()
+        can_delete = True
+    else:
+        can_delete = False
+
+        ordered_datapoints = request.user.datapoint_set.order_by('-observed_date')
+        if ordered_datapoints:
+            initial_value = ordered_datapoints[0].observed_amount
+        else:
+            initial_value = 0
+        instance = Datapoint(user = request.user, observed_amount = initial_value)
+
+    form = RecordDatapointForm(request.POST or None, instance = instance)
+    if can_delete and request.POST.get('delete'):
+        instance.delete()
+        # delete was successful, redirect
+        return redirect(reverse('tarot_app:home'))
+
+    if request.POST and form.is_valid():
+        form.save()
+        return redirect(reverse('tarot_app:home'))
+
+    return render(request = request, template_name = 'tarot/record_observation.html', context = {'recorddatapoint_form':form, 'can_delete':can_delete})
+
+@allow_guest_user
 def onetimeinvestment(request, id=None):
     if id:
         instance = get_object_or_404( OneTimeInvestment, pk=id)
@@ -211,7 +237,7 @@ def calculateDateArray(start_date, default_num_dates, goals):
     # we don't plot any data before a work_cashflow or investment of some kind starts
     num_date_buckets = default_num_dates  # initialize to reasonable value
 
-    # if there is a goal, we show make the final date the furthest-out goal date
+    # if there is a goal, we make the final date the furthest-out goal date
     if goals and any([goal.goal_date for goal in goals]):
         goal_date = max([goal.goal_date for goal in goals]) + timedelta(days=30*3)  # if they have a goal, we also show 3 months after the goal
     else:
@@ -286,6 +312,15 @@ def calculate_money_market(work_cashflow, amount_to_distribute_remaining, date_a
         money_market.append(money_market[-1]*daily_growth_rate + delta)
     return np.array(money_market)
 
+def get_observations(observations, observation_type):
+    observation_values_array = []
+    observation_dates_array = []
+    for ob in observations:  # possibly bug here
+        if ob.monetary_category == observation_type:
+            observation_values_array.append(ob.observed_amount)
+            observation_dates_array.append(ob.observed_date)
+    return np.array(observation_values_array), np.array(observation_dates_array)
+
 def calculate_goal_array(goals, date_array):
     goals_array = []
     for goal in goals:
@@ -304,15 +339,13 @@ def makeSavingsPlot(request, default_num_dates):
     work_cashflow = request.user.workcashflow_set.first()
     changes_in_income = list(request.user.changeinincome_set.all())
     changes_in_expenses = list(request.user.changeinexpenses_set.all())
-    #one_time_investments = list(request.user.onetimeinvestment_set.all())
-    #recurring_investments = list(request.user.recurringinvestment_set.all())
+    recorded_datapoints = request.user.datapoint_set.all()
     goals = list(request.user.goal_set.all())
 
     # sort the arrays #TODO: we can probably store these arrays sorted instead of resorting every time
     sorted_changes_in_income = sorted(changes_in_income, key = lambda x:x.start_date)
     sorted_changes_in_expenses = sorted(changes_in_expenses, key = lambda x:x.start_date)
-    #sorted_one_time_investments = sorted(one_time_investments, key = lambda x:x.start_date)
-    #sorted_recurring_investments = sorted(recurring_investments, key = lambda x:x.start_date)
+    sorted_datapoints = sorted(recorded_datapoints, key = lambda x:x.observed_date)
 
     date_array, date_axis_start, date_axis_end = calculateDateArray( work_cashflow.start_date, default_num_dates, goals)
 
@@ -324,30 +357,58 @@ def makeSavingsPlot(request, default_num_dates):
 
     net_worth_array = savings_array + retirement_array + money_market_array
 
+    net_worth_observations_array, net_worth_observation_dates = get_observations(sorted_datapoints, 'net worth')
+    retirement_observations_array, retirement_observation_dates = get_observations(sorted_datapoints, 'retirement value')
+    money_market_observations_array, money_market_observation_dates = get_observations(sorted_datapoints, 'invested value')
+
     net_worth = go.Scatter(x = date_array, 
                       y = net_worth_array,
                       mode = 'lines', 
-                      name = 'net worth',
+                      name = 'projected net worth',
                       opacity = 0.8, 
-                      marker_color = 'green')
+                      marker_color = '#2ca02c')
+
+    net_worth_observations = go.Scatter(x = net_worth_observation_dates, 
+                      y = net_worth_observations_array,
+                      mode = 'markers', 
+                      name = 'actual net worth',
+                      opacity = 0.8, 
+                      marker_color = '#2ca02c')
 
     savings = go.Scatter(x = date_array, 
                       y = savings_array,
                       mode = 'lines', 
-                      name = 'savings',
-                      opacity = 0.8)
+                      name = 'projected savings',
+                      opacity = 0.8,
+                      marker_color = '#d62728')
 
     retirement = go.Scatter(x = date_array, 
                       y = retirement_array,
                       mode = 'lines', 
-                      name = 'retirement',
-                      opacity = 0.8)
+                      name = 'projected retirement',
+                      opacity = 0.8,
+                      marker_color = '#17becf')
+
+    retirement_observations = go.Scatter(x = retirement_observation_dates, 
+                      y = retirement_observations_array,
+                      mode = 'markers', 
+                      name = 'actual retirement value',
+                      opacity = 0.8, 
+                      marker_color = '#17becf')
 
     money_market = go.Scatter(x = date_array, 
                       y = money_market_array,
                       mode = 'lines', 
-                      name = 'investments',
-                      opacity = 0.8)
+                      name = 'projected investments',
+                      opacity = 0.8,
+                      marker_color = '#9467bd')
+
+    money_market_observations = go.Scatter(x = money_market_observation_dates, 
+                      y = money_market_observations_array,
+                      mode = 'markers', 
+                      name = 'actual investments value',
+                      opacity = 0.8,
+                      marker_color = '#9467bd')
 
     layout = go.Layout( paper_bgcolor='#fbfbfb',
                         plot_bgcolor='#DDDDDD',
@@ -359,16 +420,7 @@ def makeSavingsPlot(request, default_num_dates):
     layout.xaxis.gridcolor = 'black'
     layout.xaxis.range = [date_axis_start, date_axis_end]
     layout.title.x = 0.5
-    data = [net_worth, savings, retirement, money_market]
-    '''
-    for i, item in enumerate(one_time_investment_values):
-        data.append( go.Scatter(x = date_array,
-                                y = item,
-                                mode = 'lines',
-                                name = 'investment: ' + sorted_one_time_investments[i].name,
-                                opacity = 0.8)
-        )
-        '''
+    data = [net_worth, savings, retirement, money_market, net_worth_observations, retirement_observations, money_market_observations]
       
     for i, item in enumerate(goals_values):
         data.append( go.Scatter(x = date_array,
