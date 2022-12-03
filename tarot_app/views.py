@@ -420,8 +420,8 @@ def makeSavingsPlot(request, default_num_dates):
     layout.xaxis.gridcolor = 'black'
     layout.xaxis.range = [date_axis_start, date_axis_end]
     layout.title.x = 0.5
-    data = [net_worth, savings, retirement, money_market, net_worth_observations, retirement_observations, money_market_observations]
-      
+    data = [net_worth, savings, retirement, money_market]
+
     for i, item in enumerate(goals_values):
         data.append( go.Scatter(x = date_array,
                                 y = item,
@@ -429,6 +429,9 @@ def makeSavingsPlot(request, default_num_dates):
                                 name = goals[i].name,
                                 opacity = 0.8)
         )
+        
+    data += [net_worth_observations, retirement_observations, money_market_observations]
+
 
     plot_div = plot({"data": data,
                     "layout": layout},

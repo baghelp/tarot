@@ -81,7 +81,7 @@ class RecordDatapointForm(forms.ModelForm):
         fields = "__all__"
         exclude = ('user',)
         widgets = {
-            'observation_date': widgets.DateInput(attrs={'type': 'date'})
+            'observed_date': widgets.DateInput(attrs={'type': 'date'})
         }
 
     def __init__(self, *args, **kwargs):
