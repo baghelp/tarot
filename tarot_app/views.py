@@ -10,9 +10,11 @@ import math
 import plotly.graph_objs as go
 import numpy as np
 
+# render index page
 def index(request):
     return render(request = request, template_name = 'tarot/index.html')
 
+#render about page
 def about(request):
     return render(request = request, template_name = 'tarot/about.html')
 
@@ -239,7 +241,7 @@ def calculateDateArray(start_date, default_num_dates, goals):
 
     # if there is a goal, we make the final date the furthest-out goal date
     if goals and any([goal.goal_date for goal in goals]):
-        goal_date = max([goal.goal_date for goal in goals]) + timedelta(days=30*3)  # if they have a goal, we also show 3 months after the goal
+        goal_date = max([goal.goal_date for goal in goals if goal.goal_date]) + timedelta(days=30*3)  # if they have a goal, we also show 3 months after the goal
     else:
         goal_date = start_date + timedelta(days=365*10)
 

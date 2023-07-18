@@ -180,7 +180,7 @@ LOGIN_URL = 'login'
 LOGOUT_REDIRECT_URL = '/tarot'
 
 # Settings for guest user registration
-GUEST_USER_CONVERT_REDIRECT_URL = 'home'
+GUEST_USER_CONVERT_REDIRECT_URL = '../home'
 
 # Code mirror configurations
 CODEMIRROR_PATH = STATIC_URL + '/' + 'codemirror'
